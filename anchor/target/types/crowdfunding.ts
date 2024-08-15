@@ -27,7 +27,7 @@ export type Crowdfunding = {
       ],
       "accounts": [
         {
-          "name": "creator",
+          "name": "owner",
           "writable": true,
           "signer": true
         },
@@ -51,7 +51,7 @@ export type Crowdfunding = {
               },
               {
                 "kind": "account",
-                "path": "creator"
+                "path": "owner"
               },
               {
                 "kind": "arg",
@@ -98,6 +98,126 @@ export type Crowdfunding = {
       ],
       "accounts": [],
       "args": []
+    },
+    {
+      "name": "registerCreator",
+      "discriminator": [
+        85,
+        3,
+        194,
+        210,
+        164,
+        140,
+        160,
+        195
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "creator",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  114,
+                  101,
+                  97,
+                  116,
+                  111,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "username",
+          "type": "string"
+        },
+        {
+          "name": "fullname",
+          "type": "string"
+        },
+        {
+          "name": "bio",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "updateCreator",
+      "discriminator": [
+        39,
+        221,
+        251,
+        213,
+        194,
+        161,
+        31,
+        207
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "creator",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  114,
+                  101,
+                  97,
+                  116,
+                  111,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "fullname",
+          "type": "string"
+        },
+        {
+          "name": "bio",
+          "type": "string"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -113,6 +233,19 @@ export type Crowdfunding = {
         229,
         192
       ]
+    },
+    {
+      "name": "creator",
+      "discriminator": [
+        237,
+        37,
+        233,
+        153,
+        165,
+        132,
+        54,
+        103
+      ]
     }
   ],
   "types": [
@@ -126,7 +259,7 @@ export type Crowdfunding = {
             "type": "u64"
           },
           {
-            "name": "creator",
+            "name": "owner",
             "type": "pubkey"
           },
           {
@@ -144,6 +277,34 @@ export type Crowdfunding = {
           {
             "name": "amountDonated",
             "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "creator",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "username",
+            "type": "string"
+          },
+          {
+            "name": "fullname",
+            "type": "string"
+          },
+          {
+            "name": "bio",
+            "type": "string"
           },
           {
             "name": "bump",

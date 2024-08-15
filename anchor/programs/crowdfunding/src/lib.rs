@@ -19,6 +19,23 @@ pub mod crowdfunding {
         Ok(())
     }
 
+    pub fn register_creator(
+        context: Context<RegisterCreator>,
+        username: String,
+        fullname: String,
+        bio: String,
+    ) -> Result<()> {
+        instructions::register_creator::save_creator(context, username, fullname, bio)
+    }
+
+    pub fn update_creator(
+        context: Context<UpdateCreator>,
+        fullname: String,
+        bio: String,
+    ) -> Result<()> {
+        instructions::update_creator::update_details(context, fullname, bio)
+    }
+
     pub fn create_campaign(
         context: Context<CreateCampaign>,
         id: u64,
