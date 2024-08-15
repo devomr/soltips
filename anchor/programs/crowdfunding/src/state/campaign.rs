@@ -4,7 +4,7 @@ use anchor_lang::prelude::*;
 #[derive(InitSpace)]
 pub struct Campaign {
     pub id: u64,
-    pub creator: Pubkey,
+    pub owner: Pubkey,
 
     #[max_len(50)]
     pub name: String,

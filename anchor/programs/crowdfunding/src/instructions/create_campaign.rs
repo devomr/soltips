@@ -6,13 +6,13 @@ use crate::{Campaign, ANCHOR_DISCRIMINATOR};
 #[instruction(id: u64)]
 pub struct CreateCampaign<'info> {
     #[account(mut)]
-    creator: Signer<'info>,
+    owner: Signer<'info>,
 
     #[account(
         init,
-        payer = creator,
+        payer = owner,
         space = ANCHOR_DISCRIMINATOR + Campaign::INIT_SPACE,
-        seeds = [b"campaign", creator.key().as_ref(), id.to_le_bytes().as_ref()],
+        seeds = [b"campaign", owner.key().as_ref(), id.to_le_bytes().as_ref()],
         bump
     )]
     pub campaign: Account<'info, Campaign>,
@@ -33,7 +33,7 @@ pub fn save_campaign(
         description,
         target_amount,
         amount_donated: 0,
-        creator: context.accounts.creator.key(),
+        owner: context.accounts.owner.key(),
         bump: context.bumps.campaign,
     });
     Ok(())
