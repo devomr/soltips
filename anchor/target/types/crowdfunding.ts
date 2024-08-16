@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/crowdfunding.json`.
  */
 export type Crowdfunding = {
-  "address": "7mJdTbF99tvmwMeLZuVoDTaHYuMwazXAeYXojpKFVEX1",
+  "address": "3Ped76YYot6WSWFbTSZ2wbh9xuDFASLNSNP842kTNb3d",
   "metadata": {
     "name": "crowdfunding",
     "version": "0.1.0",
@@ -113,11 +113,6 @@ export type Crowdfunding = {
       ],
       "accounts": [
         {
-          "name": "owner",
-          "writable": true,
-          "signer": true
-        },
-        {
           "name": "creator",
           "writable": true,
           "pda": {
@@ -135,11 +130,16 @@ export type Crowdfunding = {
                 ]
               },
               {
-                "kind": "account",
-                "path": "owner"
+                "kind": "arg",
+                "path": "username"
               }
             ]
           }
+        },
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true
         },
         {
           "name": "systemProgram",
@@ -197,8 +197,8 @@ export type Crowdfunding = {
                 ]
               },
               {
-                "kind": "account",
-                "path": "owner"
+                "kind": "arg",
+                "path": "username"
               }
             ]
           }
@@ -209,6 +209,10 @@ export type Crowdfunding = {
         }
       ],
       "args": [
+        {
+          "name": "username",
+          "type": "string"
+        },
         {
           "name": "fullname",
           "type": "string"
@@ -246,6 +250,13 @@ export type Crowdfunding = {
         54,
         103
       ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "usernameAlreadyExists",
+      "msg": "Username already exists"
     }
   ],
   "types": [

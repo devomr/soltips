@@ -2,7 +2,7 @@
 import { AnchorProvider, Program } from '@coral-xyz/anchor';
 import { PublicKey } from '@solana/web3.js';
 import type { Crowdfunding } from '../target/types/crowdfunding';
-import { IDL as CrowdfundingIDL } from '../target/types/crowdfunding';
+import CrowdfundingIDL from '../target/idl/crowdfunding.json';
 
 // Re-export the generated IDL and type
 export { Crowdfunding, CrowdfundingIDL };

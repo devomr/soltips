@@ -1,5 +1,5 @@
 import * as anchor from "@coral-xyz/anchor";
-import { BN, Program } from "@coral-xyz/anchor";
+import { AnchorError, BN, Program } from "@coral-xyz/anchor";
 import { Crowdfunding } from '../target/types/crowdfunding';
 import { confirmTransaction, makeKeypairs } from "@solana-developers/helpers";
 import { randomBytes } from "crypto";
@@ -31,29 +31,34 @@ describe('crowdfunding', () => {
   // Save the accounts for later use
   accounts.owner = alice.publicKey;
 
+  const creatorObject = {
+    username: "johnsmith",
+    fullname: "John Smith",
+    bio: "future blockchain developer",
+  };
+
+
   test("Is initialized!", async () => {
     // Add your test here.
     const tx = await program.methods.initialize().rpc();
     console.log("Your transaction signature", tx);
   });
 
-  test("Register new creator", async() => {
-    const creator = PublicKey.findProgramAddressSync(
+  test("Register a new creator", async() => {
+    const creatorPda = PublicKey.findProgramAddressSync(
       [
         Buffer.from("creator"),
-        accounts.owner.toBuffer(),
+        Buffer.from(creatorObject.username),
       ],
       program.programId
     )[0];
 
-    accounts.creator = creator;
+    accounts.creator = creatorPda;
 
-    const username = "johnsmith";
-    const fullname = "John Smith";
-    const bio = "future blockchain developer";
+    console.log('accounts', accounts);
 
     const transactionSignature = await program.methods
-      .registerCreator(username, fullname, bio)
+      .registerCreator(creatorObject.username, creatorObject.fullname, creatorObject.bio)
       .accounts({ ...accounts })
       .signers([alice])
       .rpc();
@@ -61,31 +66,32 @@ describe('crowdfunding', () => {
     await confirmTransaction(connection, transactionSignature);
 
     // check our Creator account contains the correct data
-    const creatorAccount = await program.account.creator.fetch(creator);
+    const creatorAccount = await program.account.creator.fetch(accounts.creator);
     console.log("Creator account: ", creatorAccount);
     
     expect(creatorAccount.owner.equals(alice.publicKey)).toBe(true);
-    expect(creatorAccount.username).toBe(username);
-    expect(creatorAccount.fullname).toBe(fullname);
-    expect(creatorAccount.bio).toBe(bio);
+    expect(creatorAccount.username).toBe(creatorObject.username);
+    expect(creatorAccount.fullname).toBe(creatorObject.fullname);
+    expect(creatorAccount.bio).toBe(creatorObject.bio);
   });
 
+
   test("Update creator details", async() => {
-    const creator = PublicKey.findProgramAddressSync(
+    const creatorPda = PublicKey.findProgramAddressSync(
       [
         Buffer.from("creator"),
-        accounts.owner.toBuffer(),
+        Buffer.from(creatorObject.username),
       ],
       program.programId
     )[0];
 
-    accounts.creator = creator;
+    accounts.creator = creatorPda;
 
     const newFullname = "Will Smith";
     const newBio = "senior blockchain developer";
 
     const transactionSignature = await program.methods
-      .updateCreator(newFullname, newBio)
+      .updateCreator(creatorObject.username, newFullname, newBio)
       .accounts({ ...accounts })
       .signers([alice])
       .rpc();
@@ -93,7 +99,7 @@ describe('crowdfunding', () => {
     await confirmTransaction(connection, transactionSignature);
 
     // check our Creator account contains the correct data
-    const creatorAccount = await program.account.creator.fetch(creator);
+    const creatorAccount = await program.account.creator.fetch(accounts.creator);
     console.log("Creator account after update: ", creatorAccount);
     
     expect(creatorAccount.owner.equals(alice.publicKey)).toBe(true);

@@ -1,11 +1,14 @@
 [toolchain]
 
 [features]
-seeds = false
+resolution = true
 skip-lint = false
 
 [programs.localnet]
-crowdfunding = "7mJdTbF99tvmwMeLZuVoDTaHYuMwazXAeYXojpKFVEX1"
+crowdfunding = "3Ped76YYot6WSWFbTSZ2wbh9xuDFASLNSNP842kTNb3d"
+
+[programs.devnet]
+crowdfunding = "3Ped76YYot6WSWFbTSZ2wbh9xuDFASLNSNP842kTNb3d"
 
 [registry]
 url = "https://api.apr.dev"

@@ -1,4 +1,5 @@
 pub mod constants;
+pub mod error;
 pub mod instructions;
 pub mod state;
 
@@ -8,7 +9,7 @@ pub use constants::*;
 pub use instructions::*;
 pub use state::*;
 
-declare_id!("7mJdTbF99tvmwMeLZuVoDTaHYuMwazXAeYXojpKFVEX1");
+declare_id!("3Ped76YYot6WSWFbTSZ2wbh9xuDFASLNSNP842kTNb3d");
 
 #[program]
 pub mod crowdfunding {
@@ -30,10 +31,11 @@ pub mod crowdfunding {
 
     pub fn update_creator(
         context: Context<UpdateCreator>,
+        username: String,
         fullname: String,
         bio: String,
     ) -> Result<()> {
-        instructions::update_creator::update_details(context, fullname, bio)
+        instructions::update_creator::update_details(context, username, fullname, bio)
     }
 
     pub fn create_campaign(

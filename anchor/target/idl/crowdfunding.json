@@ -1,5 +1,5 @@
 {
-  "address": "7mJdTbF99tvmwMeLZuVoDTaHYuMwazXAeYXojpKFVEX1",
+  "address": "3Ped76YYot6WSWFbTSZ2wbh9xuDFASLNSNP842kTNb3d",
   "metadata": {
     "name": "crowdfunding",
     "version": "0.1.0",
@@ -107,11 +107,6 @@
       ],
       "accounts": [
         {
-          "name": "owner",
-          "writable": true,
-          "signer": true
-        },
-        {
           "name": "creator",
           "writable": true,
           "pda": {
@@ -129,11 +124,16 @@
                 ]
               },
               {
-                "kind": "account",
-                "path": "owner"
+                "kind": "arg",
+                "path": "username"
               }
             ]
           }
+        },
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true
         },
         {
           "name": "system_program",
@@ -191,8 +191,8 @@
                 ]
               },
               {
-                "kind": "account",
-                "path": "owner"
+                "kind": "arg",
+                "path": "username"
               }
             ]
           }
@@ -203,6 +203,10 @@
         }
       ],
       "args": [
+        {
+          "name": "username",
+          "type": "string"
+        },
         {
           "name": "fullname",
           "type": "string"
@@ -240,6 +244,13 @@
         54,
         103
       ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "UsernameAlreadyExists",
+      "msg": "Username already exists"
     }
   ],
   "types": [
