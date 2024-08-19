@@ -2,7 +2,7 @@
 
 import { useWallet } from '@solana/wallet-adapter-react';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
-import { IconRefresh } from '@tabler/icons-react';
+import { IconRefresh, IconWallet } from '@tabler/icons-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import { AppModal, ellipsify } from '../ui/ui-layout';
@@ -20,13 +20,10 @@ export function AccountBalance({ address }: { address: PublicKey }) {
   const query = useGetBalance({ address });
 
   return (
-    <div>
-      <h1
-        className="text-5xl font-bold cursor-pointer"
-        onClick={() => query.refetch()}
-      >
-        {query.data ? <BalanceSol balance={query.data} /> : '...'} SOL
-      </h1>
+    <div className="btn btn-ghost btn-sm rounded-btn"
+      onClick={() => query.refetch()}>
+      <span className='flex items-center gap-1'><IconWallet size={18} />Balance:</span>
+      {query.data ? <BalanceSol balance={query.data} /> : '...'}
     </div>
   );
 }
@@ -319,7 +316,7 @@ export function AccountTransactions({ address }: { address: PublicKey }) {
 
 function BalanceSol({ balance }: { balance: number }) {
   return (
-    <span>{Math.round((balance / LAMPORTS_PER_SOL) * 100000) / 100000}</span>
+    <span>{Math.round((balance / LAMPORTS_PER_SOL) * 100000) / 100000} SOL</span>
   );
 }
 
