@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/crowdfunding.json`.
  */
 export type Crowdfunding = {
-  "address": "3Ped76YYot6WSWFbTSZ2wbh9xuDFASLNSNP842kTNb3d",
+  "address": "77UhmVQnMJG1VhotjsZQKGHrRybSvtd4JJGrsfg6xBss",
   "metadata": {
     "name": "crowdfunding",
     "version": "0.1.0",
@@ -130,6 +130,31 @@ export type Crowdfunding = {
                 ]
               },
               {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        },
+        {
+          "name": "creatorUsername",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  101,
+                  114,
+                  110,
+                  97,
+                  109,
+                  101
+                ]
+              },
+              {
                 "kind": "arg",
                 "path": "username"
               }
@@ -158,6 +183,99 @@ export type Crowdfunding = {
         {
           "name": "bio",
           "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "supportCreator",
+      "discriminator": [
+        162,
+        115,
+        57,
+        64,
+        112,
+        75,
+        21,
+        43
+      ],
+      "accounts": [
+        {
+          "name": "supporter",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "creator",
+          "writable": true
+        },
+        {
+          "name": "receiver",
+          "writable": true
+        },
+        {
+          "name": "supporterTransfer",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  117,
+                  112,
+                  112,
+                  111,
+                  114,
+                  116,
+                  101,
+                  114,
+                  84,
+                  114,
+                  97,
+                  110,
+                  115,
+                  102,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "creator"
+              },
+              {
+                "kind": "account",
+                "path": "creator.supporters_count",
+                "account": "creator"
+              }
+            ]
+          }
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "message",
+          "type": "string"
+        },
+        {
+          "name": "itemType",
+          "type": "string"
+        },
+        {
+          "name": "quantity",
+          "type": "u16"
+        },
+        {
+          "name": "price",
+          "type": "f64"
         }
       ]
     },
@@ -250,6 +368,32 @@ export type Crowdfunding = {
         54,
         103
       ]
+    },
+    {
+      "name": "creatorUsername",
+      "discriminator": [
+        213,
+        232,
+        22,
+        26,
+        139,
+        83,
+        205,
+        14
+      ]
+    },
+    {
+      "name": "supporterTransfer",
+      "discriminator": [
+        194,
+        22,
+        127,
+        36,
+        178,
+        170,
+        242,
+        78
+      ]
     }
   ],
   "errors": [
@@ -257,6 +401,11 @@ export type Crowdfunding = {
       "code": 6000,
       "name": "usernameAlreadyExists",
       "msg": "Username already exists"
+    },
+    {
+      "code": 6001,
+      "name": "invalidTransferAmount",
+      "msg": "Transfer amount is invalid"
     }
   ],
   "types": [
@@ -316,6 +465,70 @@ export type Crowdfunding = {
           {
             "name": "bio",
             "type": "string"
+          },
+          {
+            "name": "supportersCount",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "creatorUsername",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "supporterTransfer",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "supporter",
+            "type": "pubkey"
+          },
+          {
+            "name": "creator",
+            "type": "pubkey"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "message",
+            "type": "string"
+          },
+          {
+            "name": "transferAmount",
+            "type": "f64"
+          },
+          {
+            "name": "itemType",
+            "type": "string"
+          },
+          {
+            "name": "quantity",
+            "type": "u16"
+          },
+          {
+            "name": "price",
+            "type": "f64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
           },
           {
             "name": "bump",

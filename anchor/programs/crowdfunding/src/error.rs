@@ -4,4 +4,7 @@ use anchor_lang::prelude::*;
 pub enum ErrorCode {
     #[msg("Username already exists")]
     UsernameAlreadyExists,
+
+    #[msg("Transfer amount is invalid")]
+    InvalidTransferAmount,
 }

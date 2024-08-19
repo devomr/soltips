@@ -9,7 +9,7 @@ pub use constants::*;
 pub use instructions::*;
 pub use state::*;
 
-declare_id!("3Ped76YYot6WSWFbTSZ2wbh9xuDFASLNSNP842kTNb3d");
+declare_id!("77UhmVQnMJG1VhotjsZQKGHrRybSvtd4JJGrsfg6xBss");
 
 #[program]
 pub mod crowdfunding {
@@ -36,6 +36,19 @@ pub mod crowdfunding {
         bio: String,
     ) -> Result<()> {
         instructions::update_creator::update_details(context, username, fullname, bio)
+    }
+
+    pub fn support_creator(
+        context: Context<CreateSupporterTransfer>,
+        name: String,
+        message: String,
+        item_type: String,
+        quantity: u16,
+        price: f64,
+    ) -> Result<()> {
+        instructions::create_supporter_transfer::save_supporter_transfer(
+            context, name, message, item_type, quantity, price,
+        )
     }
 
     pub fn create_campaign(

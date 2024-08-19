@@ -14,5 +14,7 @@ pub struct Creator {
     #[max_len(250)]
     pub bio: String,
 
+    pub supporters_count: u64,
+
     pub bump: u8,
 }
