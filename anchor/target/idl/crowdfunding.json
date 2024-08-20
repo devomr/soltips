@@ -1,5 +1,5 @@
 {
-  "address": "77UhmVQnMJG1VhotjsZQKGHrRybSvtd4JJGrsfg6xBss",
+  "address": "5dWX9UvibREvTPvU1zC7woKngTV1YfsXAqm1rDzezNSg",
   "metadata": {
     "name": "crowdfunding",
     "version": "0.1.0",
@@ -461,7 +461,35 @@
             "type": "string"
           },
           {
+            "name": "image_url",
+            "type": "string"
+          },
+          {
+            "name": "display_supporters_count",
+            "type": "bool"
+          },
+          {
+            "name": "price_per_donation",
+            "type": "u64"
+          },
+          {
+            "name": "donation_item",
+            "type": "string"
+          },
+          {
+            "name": "thank_you_message",
+            "type": "string"
+          },
+          {
             "name": "supporters_count",
+            "type": "u64"
+          },
+          {
+            "name": "available_funds",
+            "type": "u64"
+          },
+          {
+            "name": "withdrawn_funds",
             "type": "u64"
           },
           {
