@@ -2,10 +2,11 @@
 
 import { FormEvent, useState } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { Creator, useCrowdfundingProgram, useSupporterTransfer } from '../data-access/crowdfunding-data-access';
+import { Creator, useCrowdfundingProgram } from '../data-access/crowdfunding-data-access';
+import { availableDonationItems } from '../data-access/local-data-access';
+import { lamportsToSol } from '../utils/conversion.util';
 
 const donationOptions = [1, 3, 5];
-const coffeePrice = 0.01;
 
 type DonationFormProps = {
   creator: Creator
@@ -26,8 +27,15 @@ const initialDonationFormData: DonationFormData = {
 const DonationForm: React.FC<DonationFormProps> = ({ creator }) => {
   const { publicKey } = useWallet();
   const { supporterTransfer } = useCrowdfundingProgram();
-
   const [donationFormData, setDonationFormData] = useState<DonationFormData>(initialDonationFormData);
+  const [showThankYouModal, setShowThankYouModal] = useState(false);
+
+  const coffeePrice = lamportsToSol(creator.pricePerDonation);
+  let donationItem = availableDonationItems.find(item => item.value === creator.donationItem);
+
+  if (!donationItem) {
+    donationItem = availableDonationItems[0];
+  }
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -42,16 +50,17 @@ const DonationForm: React.FC<DonationFormProps> = ({ creator }) => {
 
     // clear the form state
     setDonationFormData(initialDonationFormData);
+    setShowThankYouModal(true);
   };
 
   return (
     <div>
-      <h3 className="text-md mb-4 font-bold text-slate-900">
-        Buy {creator.fullname} some coffee ☕
+      <h3 className="text-lg mb-4 font-bold text-slate-900">
+        Buy {creator.fullname} some {donationItem.icon}
       </h3>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="flex items-center justify-center rounded-md border-purple-300 border-[1px] bg-purple-100 p-4">
-          <div className="text-5xl">☕</div>
+          <div className="text-5xl">{donationItem.icon}</div>
           <div className="mx-4 text-2xl font-bold text-gray-400">X</div>
           <div className="flex items-center gap-2">
             {donationOptions.map((donationOption, idx) => (

@@ -1,5 +1,6 @@
 export type UserAvatarProps = {
   name: string;
+  imageUrl?: string;
 };
 
 function extractLetters(name: string): string {
@@ -17,10 +18,21 @@ function extractLetters(name: string): string {
   return firstLetters;
 }
 
-export const UserAvatar: React.FC<UserAvatarProps> = ({ name }) => {
-  return (
-    <div className="bg-slate-600 text-white font-bold rounded-full w-16 h-16 flex items-center justify-center text-2xl">
-      {extractLetters(name)}
+export const UserAvatar = ({ name, imageUrl }: UserAvatarProps) => {
+  // If an image URL is provided, use it; otherwise, extract letters from the name
+  const avatarContent = imageUrl ? (
+    <div className="avatar">
+      <div className="w-20 rounded-full">
+        <img src={imageUrl} alt={name} />
+      </div>
+    </div>
+  ) : (
+    <div className="avatar placeholder">
+      <div className="bg-neutral text-neutral-content w-20 rounded-full">
+        <span className="text-3xl">{extractLetters(name)}</span>
+      </div>
     </div>
   );
+
+  return avatarContent;
 };

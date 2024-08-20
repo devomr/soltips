@@ -15,6 +15,9 @@ import {
 } from '../cluster/cluster-ui';
 import toast, { Toaster } from 'react-hot-toast';
 import { Navbar } from '../navbar/navbar';
+import { Creator } from '../data-access/crowdfunding-data-access';
+import { UserAvatar } from '../creator/user-avatar';
+import confetti from 'canvas-confetti';
 
 export function UiLayout({
   children,
@@ -31,7 +34,7 @@ export function UiLayout({
       <ClusterChecker>
         <AccountChecker />
       </ClusterChecker>
-      <main className="flex-grow mx-4 lg:mx-8">
+      <main className="flex-grow">
         <Suspense
           fallback={
             <div className="text-center my-32">
@@ -43,21 +46,6 @@ export function UiLayout({
         </Suspense>
         <Toaster position="bottom-right" />
       </main>
-      <footer className="footer footer-center bg-base-300 text-base-content p-4">
-        <aside>
-          <p>
-            Made with ❤️ by{' '}
-            <a
-              className="link"
-              href="https://github.com/devomr"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              devomr
-            </a>
-          </p>
-        </aside>
-      </footer>
     </div>
   );
 }

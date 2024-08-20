@@ -11,11 +11,18 @@ import { useTransactionToast } from '../ui/ui-layout';
 import { BN } from '@coral-xyz/anchor';
 
 export type Creator = {
-  owner: PublicKey,
-  username: string,
-  fullname: string,
-  bio: string,
-  bump: number,
+  owner: PublicKey;
+  username: string;
+  fullname: string;
+  bio: string;
+  imageUrl: string;
+  displaySupportersCount: boolean;
+  pricePerDonation: BN;
+  donationItem: string;
+  thankYouMessage: string;
+  supportersCount: BN;
+  availableFunds: BN;
+  withdrawnFunds: BN;
 }
 
 interface RegisterCreatorInput {

@@ -1,3 +1,9 @@
+'use client';
+
+import { useWallet } from '@solana/wallet-adapter-react';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { useGetCreatorByAddress } from '../data-access/crowdfunding-data-access';
 import { FeatureCard } from './feature-card';
 import UsernameForm from './username-form';
 
@@ -34,9 +40,21 @@ const featureCards = [
   },
 ];
 
-export default async function LandingFeature() {
+export default function LandingFeature() {
+  const router = useRouter();
+  const { publicKey } = useWallet();
+  const { data: creator } = useGetCreatorByAddress({ address: publicKey });
+
+  useEffect(() => {
+    if (creator) {
+      // redirect logged in creator to dashboard
+      router.push('/dashboard');
+    }
+
+  }, [creator]);
+
   return (
-    <>
+    <div className='mx-4 lg:mx-8'>
       <section className="py-16">
         <div className="mx-auto max-w-screen-2xl px-2 sm:px-6 lg:px-8">
           <div className="mx-auto flex max-w-[650px] flex-col items-center justify-center text-center">
@@ -66,6 +84,6 @@ export default async function LandingFeature() {
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }
