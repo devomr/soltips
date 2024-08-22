@@ -5,6 +5,9 @@ pub enum ErrorCode {
     #[msg("Username already exists")]
     UsernameAlreadyExists,
 
-    #[msg("Transfer amount is invalid")]
-    InvalidTransferAmount,
+    #[msg("The provided amount must be greater than zero")]
+    InvalidAmount,
+
+    #[msg("Signer does not have access to call this instruction.")]
+    InvalidSigner,
 }

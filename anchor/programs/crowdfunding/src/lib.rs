@@ -26,29 +26,50 @@ pub mod crowdfunding {
         fullname: String,
         bio: String,
     ) -> Result<()> {
-        instructions::register_creator::save_creator(context, username, fullname, bio)
+        instructions::register_creator::register_new_creator(context, username, fullname, bio)
     }
 
-    pub fn update_creator(
+    pub fn update_creator_profile(
         context: Context<UpdateCreator>,
-        username: String,
         fullname: String,
         bio: String,
+        image_url: String,
     ) -> Result<()> {
-        instructions::update_creator::update_details(context, username, fullname, bio)
+        instructions::update_creator::update_creator_profile_data(context, fullname, bio, image_url)
     }
 
-    pub fn support_creator(
-        context: Context<CreateSupporterTransfer>,
+    pub fn update_creator_page(
+        context: Context<UpdateCreator>,
+        is_supporters_count_visible: bool,
+        price_per_donation: u64,
+        donation_item: String,
+        thanks_message: String,
+    ) -> Result<()> {
+        instructions::update_creator::update_creator_page_settings(
+            context,
+            is_supporters_count_visible,
+            price_per_donation,
+            donation_item,
+            thanks_message,
+        )
+    }
+
+    pub fn deposit_supporter_transfer(
+        context: Context<DepositSupporterTransfer>,
         name: String,
         message: String,
-        item_type: String,
         quantity: u16,
-        price: f64,
     ) -> Result<()> {
-        instructions::create_supporter_transfer::save_supporter_transfer(
-            context, name, message, item_type, quantity, price,
+        instructions::deposit_supporter_transfer::deposit_supporter_transfer_funds(
+            context, name, message, quantity,
         )
+    }
+
+    pub fn claim_supporter_transfer(
+        context: Context<ClaimSupporterTransfer>,
+        amount: u64,
+    ) -> Result<()> {
+        instructions::claim_supporter_transfer::claim_supporter_transfer_funds(context, amount)
     }
 
     pub fn create_campaign(

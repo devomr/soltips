@@ -8,6 +8,86 @@
   },
   "instructions": [
     {
+      "name": "claim_supporter_transfer",
+      "discriminator": [
+        218,
+        90,
+        45,
+        81,
+        103,
+        56,
+        116,
+        207
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "creator_account",
+          "writable": true
+        },
+        {
+          "name": "supporter_transfer_payment_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  117,
+                  112,
+                  112,
+                  111,
+                  114,
+                  116,
+                  101,
+                  114,
+                  84,
+                  114,
+                  97,
+                  110,
+                  115,
+                  102,
+                  101,
+                  114,
+                  80,
+                  97,
+                  121,
+                  109,
+                  101,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "creator_account"
+              },
+              {
+                "kind": "account",
+                "path": "creator_account.supporter_payments_count",
+                "account": "Creator"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
       "name": "create_campaign",
       "discriminator": [
         111,
@@ -79,6 +159,87 @@
       ]
     },
     {
+      "name": "deposit_supporter_transfer",
+      "discriminator": [
+        207,
+        16,
+        199,
+        119,
+        80,
+        73,
+        19,
+        169
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "creator_account",
+          "writable": true
+        },
+        {
+          "name": "supporter_transfer_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  117,
+                  112,
+                  112,
+                  111,
+                  114,
+                  116,
+                  101,
+                  114,
+                  84,
+                  114,
+                  97,
+                  110,
+                  115,
+                  102,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "creator_account"
+              },
+              {
+                "kind": "account",
+                "path": "creator_account.supporters_count",
+                "account": "Creator"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "message",
+          "type": "string"
+        },
+        {
+          "name": "quantity",
+          "type": "u16"
+        }
+      ]
+    },
+    {
       "name": "initialize",
       "discriminator": [
         175,
@@ -107,7 +268,12 @@
       ],
       "accounts": [
         {
-          "name": "creator",
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "creator_account",
           "writable": true,
           "pda": {
             "seeds": [
@@ -125,13 +291,13 @@
               },
               {
                 "kind": "account",
-                "path": "owner"
+                "path": "signer"
               }
             ]
           }
         },
         {
-          "name": "creator_username",
+          "name": "creator_username_account",
           "writable": true,
           "pda": {
             "seeds": [
@@ -156,11 +322,6 @@
           }
         },
         {
-          "name": "owner",
-          "writable": true,
-          "signer": true
-        },
-        {
           "name": "system_program",
           "address": "11111111111111111111111111111111"
         }
@@ -181,118 +342,25 @@
       ]
     },
     {
-      "name": "support_creator",
+      "name": "update_creator_page",
       "discriminator": [
-        162,
-        115,
-        57,
-        64,
-        112,
-        75,
-        21,
-        43
+        141,
+        216,
+        149,
+        42,
+        180,
+        193,
+        122,
+        40
       ],
       "accounts": [
         {
-          "name": "supporter",
+          "name": "signer",
           "writable": true,
           "signer": true
         },
         {
-          "name": "creator",
-          "writable": true
-        },
-        {
-          "name": "receiver",
-          "writable": true
-        },
-        {
-          "name": "supporter_transfer",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  115,
-                  117,
-                  112,
-                  112,
-                  111,
-                  114,
-                  116,
-                  101,
-                  114,
-                  84,
-                  114,
-                  97,
-                  110,
-                  115,
-                  102,
-                  101,
-                  114
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "creator"
-              },
-              {
-                "kind": "account",
-                "path": "creator.supporters_count",
-                "account": "Creator"
-              }
-            ]
-          }
-        },
-        {
-          "name": "system_program",
-          "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": [
-        {
-          "name": "name",
-          "type": "string"
-        },
-        {
-          "name": "message",
-          "type": "string"
-        },
-        {
-          "name": "item_type",
-          "type": "string"
-        },
-        {
-          "name": "quantity",
-          "type": "u16"
-        },
-        {
-          "name": "price",
-          "type": "f64"
-        }
-      ]
-    },
-    {
-      "name": "update_creator",
-      "discriminator": [
-        39,
-        221,
-        251,
-        213,
-        194,
-        161,
-        31,
-        207
-      ],
-      "accounts": [
-        {
-          "name": "owner",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "creator",
+          "name": "creator_account",
           "writable": true,
           "pda": {
             "seeds": [
@@ -309,8 +377,8 @@
                 ]
               },
               {
-                "kind": "arg",
-                "path": "username"
+                "kind": "account",
+                "path": "signer"
               }
             ]
           }
@@ -322,15 +390,81 @@
       ],
       "args": [
         {
-          "name": "username",
+          "name": "is_supporters_count_visible",
+          "type": "bool"
+        },
+        {
+          "name": "price_per_donation",
+          "type": "u64"
+        },
+        {
+          "name": "donation_item",
           "type": "string"
         },
+        {
+          "name": "thanks_message",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "update_creator_profile",
+      "discriminator": [
+        8,
+        240,
+        162,
+        55,
+        110,
+        46,
+        177,
+        108
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "creator_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  114,
+                  101,
+                  97,
+                  116,
+                  111,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "signer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
         {
           "name": "fullname",
           "type": "string"
         },
         {
           "name": "bio",
+          "type": "string"
+        },
+        {
+          "name": "image_url",
           "type": "string"
         }
       ]
@@ -388,6 +522,19 @@
         242,
         78
       ]
+    },
+    {
+      "name": "SupporterTransferPayment",
+      "discriminator": [
+        86,
+        116,
+        191,
+        165,
+        23,
+        20,
+        113,
+        214
+      ]
     }
   ],
   "errors": [
@@ -398,8 +545,13 @@
     },
     {
       "code": 6001,
-      "name": "InvalidTransferAmount",
-      "msg": "Transfer amount is invalid"
+      "name": "InvalidAmount",
+      "msg": "The provided amount must be greater than zero"
+    },
+    {
+      "code": 6002,
+      "name": "InvalidSigner",
+      "msg": "Signer does not have access to call this instruction."
     }
   ],
   "types": [
@@ -465,7 +617,7 @@
             "type": "string"
           },
           {
-            "name": "display_supporters_count",
+            "name": "is_supporters_count_visible",
             "type": "bool"
           },
           {
@@ -477,7 +629,7 @@
             "type": "string"
           },
           {
-            "name": "thank_you_message",
+            "name": "thanks_message",
             "type": "string"
           },
           {
@@ -485,7 +637,7 @@
             "type": "u64"
           },
           {
-            "name": "available_funds",
+            "name": "supporter_payments_count",
             "type": "u64"
           },
           {
@@ -534,10 +686,10 @@
           },
           {
             "name": "transfer_amount",
-            "type": "f64"
+            "type": "u64"
           },
           {
-            "name": "item_type",
+            "name": "donation_item",
             "type": "string"
           },
           {
@@ -545,8 +697,28 @@
             "type": "u16"
           },
           {
-            "name": "price",
-            "type": "f64"
+            "name": "timestamp",
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SupporterTransferPayment",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "creator",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
           },
           {
             "name": "timestamp",
