@@ -29,7 +29,7 @@ export function UiLayout({
   const pathname = usePathname();
 
   return (
-    <div className="h-full flex flex-col bg-gray-100">
+    <div className="flex min-h-full flex-col bg-gray-100">
       <Navbar />
       <ClusterChecker>
         <AccountChecker />
@@ -37,7 +37,7 @@ export function UiLayout({
       <main className="flex-grow">
         <Suspense
           fallback={
-            <div className="text-center my-32">
+            <div className="my-32 text-center">
               <span className="loading loading-spinner loading-lg"></span>
             </div>
           }
@@ -81,7 +81,7 @@ export function AppModal({
   return (
     <dialog className="modal" ref={dialogRef}>
       <div className="modal-box space-y-5">
-        <h3 className="font-bold text-lg">{title}</h3>
+        <h3 className="text-lg font-bold">{title}</h3>
         {children}
         <div className="modal-action">
           <div className="join space-x-2">
@@ -153,7 +153,7 @@ export function useTransactionToast() {
           label={'View Transaction'}
           className="btn btn-xs btn-primary"
         />
-      </div>
+      </div>,
     );
   };
 }

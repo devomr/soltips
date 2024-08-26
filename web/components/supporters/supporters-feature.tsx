@@ -12,7 +12,6 @@ export default function SupportersFeature() {
   const { publicKey } = useWallet();
   const { data: creator } = useGetCreatorByAddress({ address: publicKey });
 
-
   // useEffect(() => {
   //   if (!creator) {
   //     router.push('/');
@@ -22,10 +21,8 @@ export default function SupportersFeature() {
   if (creator) {
     return (
       <DashboardLayout>
-        <div className='rounded-md bg-white p-4'>
-          <h3 className='font-bold text-xl mb-4'>
-            Supporters 🤝
-          </h3>
+        <div className="rounded-md bg-white p-4">
+          <h3 className="mb-4 text-xl font-bold">Supporters 🤝</h3>
 
           <SupportersList username={creator.username} />
         </div>

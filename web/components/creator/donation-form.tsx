@@ -2,14 +2,18 @@
 
 import { FormEvent, useState } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { Creator, useCrowdfundingProgram } from '../data-access/crowdfunding-data-access';
-import { availableDonationItems } from '../data-access/local-data-access';
+import {
+  Creator,
+  useCrowdfundingProgram,
+} from '../data-access/crowdfunding-data-access';
 import { lamportsToSol } from '../utils/conversion.util';
+import ThankYouModal from '../shared/modals/thank-you-modal';
+import { getDonationItem } from '../data-access/local-data-access';
 
 const donationOptions = [1, 3, 5];
 
 type DonationFormProps = {
-  creator: Creator
+  creator: Creator;
 };
 
 type DonationFormData = {
@@ -26,16 +30,14 @@ const initialDonationFormData: DonationFormData = {
 
 const DonationForm: React.FC<DonationFormProps> = ({ creator }) => {
   const { publicKey } = useWallet();
-  const { supporterTransfer } = useCrowdfundingProgram();
-  const [donationFormData, setDonationFormData] = useState<DonationFormData>(initialDonationFormData);
+  const { saveSupporterDonation } = useCrowdfundingProgram();
+  const [donationFormData, setDonationFormData] = useState<DonationFormData>(
+    initialDonationFormData,
+  );
   const [showThankYouModal, setShowThankYouModal] = useState(false);
 
   const coffeePrice = lamportsToSol(creator.pricePerDonation);
-  let donationItem = availableDonationItems.find(item => item.value === creator.donationItem);
-
-  if (!donationItem) {
-    donationItem = availableDonationItems[0];
-  }
+  const donationItem = getDonationItem(creator.donationItem);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -45,8 +47,15 @@ const DonationForm: React.FC<DonationFormProps> = ({ creator }) => {
       return;
     }
 
-    const { name, message, quantity } = donationFormData;
-    await supporterTransfer.mutateAsync({ name, message, itemType: 'coffee', quantity, price: coffeePrice, creator });
+    if (creator.owner.equals(publicKey)) {
+      alert('You cannot donate to yourself');
+      return;
+    }
+
+    await saveSupporterDonation.mutateAsync({
+      ...donationFormData,
+      creator,
+    });
 
     // clear the form state
     setDonationFormData(initialDonationFormData);
@@ -54,14 +63,14 @@ const DonationForm: React.FC<DonationFormProps> = ({ creator }) => {
   };
 
   return (
-    <div>
-      <h3 className="text-lg mb-4 font-bold text-slate-900">
+    <>
+      <h3 className="mb-4 text-lg font-bold text-slate-900">
         Buy {creator.fullname} some {donationItem.icon}
       </h3>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="flex items-center justify-center rounded-md border-purple-300 border-[1px] bg-purple-100 p-4">
-          <div className="text-5xl">{donationItem.icon}</div>
-          <div className="mx-4 text-2xl font-bold text-gray-400">X</div>
+        <div className="flex flex-wrap items-center justify-center gap-3 rounded-md bg-purple-100 p-4">
+          <div className="text-4xl lg:text-5xl">{donationItem.icon}</div>
+          <div className="text-xl font-bold text-gray-500">X</div>
           <div className="flex items-center gap-2">
             {donationOptions.map((donationOption, idx) => (
               <div key={idx}>
@@ -81,29 +90,29 @@ const DonationForm: React.FC<DonationFormProps> = ({ creator }) => {
                 />
                 <label
                   htmlFor={`quantity${idx + 1}`}
-                  className="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-purple-300 border-[1px] bg-white font-bold hover:border-purple-400 peer-checked:bg-purple-800 peer-checked:text-white"
+                  className="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-[1px] border-purple-300 bg-white font-bold hover:border-purple-400 peer-checked:bg-purple-800 peer-checked:text-white md:h-12 md:w-12"
                 >
                   {donationOption}
                 </label>
               </div>
             ))}
-            <div>
-              <input
-                type="number"
-                id="customQuantity"
-                name="customQuantity"
-                min={1}
-                max={50}
-                className="h-12 w-12 rounded-md border-purple-300 border-[1px] p-3 text-center"
-                placeholder="10"
-                onChange={(e) =>
-                  setDonationFormData((prevState) => ({
-                    ...prevState,
-                    quantity: parseInt(e.target.value) || 0,
-                  }))
-                }
-              />
-            </div>
+
+            <input
+              type="number"
+              id="customQuantity"
+              name="customQuantity"
+              min={1}
+              max={50}
+              value={donationFormData.quantity}
+              className="h-10 w-10 rounded-md border-[1px] border-purple-300 text-center md:h-12 md:w-12"
+              placeholder="10"
+              onChange={(e) =>
+                setDonationFormData((prevState) => ({
+                  ...prevState,
+                  quantity: parseInt(e.target.value) || 0,
+                }))
+              }
+            />
           </div>
         </div>
 
@@ -135,13 +144,24 @@ const DonationForm: React.FC<DonationFormProps> = ({ creator }) => {
         ></textarea>
         <button
           type="submit"
-          className="btn btn-md rounded-btn w-full bg-purple-800 text-white outline-none hover:bg-purple-700"
-          disabled={supporterTransfer.isPending || donationFormData.quantity === 0}
+          className="btn btn-md w-full rounded-full bg-purple-800 text-base text-white outline-none hover:bg-purple-700"
+          disabled={
+            saveSupporterDonation.isPending || donationFormData.quantity === 0
+          }
         >
-          Support with {donationFormData.quantity * coffeePrice} SOL {supporterTransfer.isPending && '...'}
+          Tip {donationFormData.quantity * coffeePrice} SOL{' '}
+          {saveSupporterDonation.isPending && '...'}
         </button>
       </form>
-    </div>
+      <ThankYouModal
+        hide={() => setShowThankYouModal(false)}
+        show={showThankYouModal}
+        creator={creator}
+        quantity={donationFormData.quantity}
+        donationItem={donationItem.value}
+        thanksMessage={creator.thanksMessage}
+      />
+    </>
   );
 };
 

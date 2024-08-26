@@ -1,7 +1,10 @@
 'use client';
 
-import { CROWDFUNDING_PROGRAM_ID, getCrowdfundingProgram } from '@soltips/anchor';
-import { useConnection } from '@solana/wallet-adapter-react';
+import {
+  CROWDFUNDING_PROGRAM_ID,
+  getCrowdfundingProgram,
+} from '@soltips/anchor';
+import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
@@ -16,28 +19,52 @@ export type Creator = {
   fullname: string;
   bio: string;
   imageUrl: string;
-  displaySupportersCount: boolean;
+  isSupportersCountVisible: boolean;
   pricePerDonation: BN;
   donationItem: string;
-  thankYouMessage: string;
   supportersCount: BN;
-  availableFunds: BN;
-  withdrawnFunds: BN;
-}
+  supporterDonationsAmount: BN;
+  thanksMessage: string;
+};
 
-interface RegisterCreatorInput {
-  owner: PublicKey,
-  username: string,
-  fullname: string,
-  bio: string,
-}
-
-interface SupporterTransferInput {
+export type SupporterDonation = {
+  supporter: PublicKey;
   name: string;
   message: string;
-  itemType: string;
+  amount: number;
+  fees: number;
+  item: string;
   quantity: number;
   price: number;
+  timestamp: BN;
+};
+
+interface RegisterCreatorInput {
+  owner: PublicKey;
+  username: string;
+  fullname: string;
+  bio: string;
+}
+
+interface UpdateCreatorProfileInput {
+  owner: PublicKey;
+  fullname: string;
+  bio: string;
+  imageUrl: string;
+}
+
+interface UpdateCreatorPageInput {
+  owner: PublicKey;
+  isSupportersCountVisible: boolean;
+  pricePerDonation: number;
+  donationItem: string;
+  thanksMessage: string;
+}
+
+interface SaveSupporterDonationInput {
+  name: string;
+  message: string;
+  quantity: number;
   creator: Creator;
 }
 
@@ -48,6 +75,7 @@ export function useCrowdfundingProgram() {
   const provider = useAnchorProvider();
   const program = getCrowdfundingProgram(provider);
   const client = useQueryClient();
+  const { publicKey } = useWallet();
 
   const getProgramAccount = useQuery({
     queryKey: ['get-program-account', { cluster }],
@@ -68,10 +96,11 @@ export function useCrowdfundingProgram() {
       const accounts = {
         creator: creatorPda,
         owner: owner,
-        usernameAccount: usernamePda
+        usernameAccount: usernamePda,
       };
 
-      return program.methods.registerCreator(username, fullname, bio)
+      return program.methods
+        .registerCreator(username, fullname, bio)
         .accounts({ ...accounts })
         .rpc();
     },
@@ -82,21 +111,89 @@ export function useCrowdfundingProgram() {
     onError: () => toast.error('Failed to run program'),
   });
 
-  const supporterTransfer = useMutation<string, Error, SupporterTransferInput>({
-    mutationKey: ['crowdfunding', 'supporter-transfer', { cluster }],
-    mutationFn: async ({ name, message, itemType, quantity, price, creator }) => {
-
-      const creatorPda = getCreatorPda(creator.owner);
-      const creatorAccount = await program.account.creator.fetch(creatorPda);
-      const supporterTransferPda = getSupporterTransferPda(creatorPda, creatorAccount.supportersCount)
+  const updateCreatorProfile = useMutation<
+    string,
+    Error,
+    UpdateCreatorProfileInput
+  >({
+    mutationKey: ['crowdfunding', 'update-creator-profile', { cluster }],
+    mutationFn: async ({ fullname, bio, imageUrl, owner }) => {
+      const creatorPda = getCreatorPda(owner);
 
       const accounts = {
-        creator: creatorPda,
-        supporterTransfer: supporterTransferPda,
-        receiver: creator.owner
-      }
+        creatorAccount: creatorPda,
+      };
 
-      return program.methods.supportCreator(name, message, itemType, quantity, price)
+      return program.methods
+        .updateCreatorProfile(fullname, bio, imageUrl)
+        .accounts({ ...accounts })
+        .rpc();
+    },
+    onSuccess: (signature) => {
+      console.log(signature);
+      transactionToast(signature);
+    },
+    onError: () => toast.error('Failed to run program'),
+  });
+
+  const updateCreatorPage = useMutation<string, Error, UpdateCreatorPageInput>({
+    mutationKey: ['crowdfunding', 'update-creator-profile', { cluster }],
+    mutationFn: async ({
+      isSupportersCountVisible,
+      pricePerDonation,
+      donationItem,
+      thanksMessage,
+      owner,
+    }) => {
+      const creatorPda = getCreatorPda(owner);
+
+      const accounts = {
+        creatorAccount: creatorPda,
+      };
+
+      return program.methods
+        .updateCreatorPage(
+          isSupportersCountVisible,
+          new BN(pricePerDonation),
+          donationItem,
+          thanksMessage,
+        )
+        .accounts({ ...accounts })
+        .rpc();
+    },
+    onSuccess: (signature) => {
+      console.log(signature);
+      transactionToast(signature);
+    },
+    onError: () => toast.error('Failed to run program'),
+  });
+
+  const saveSupporterDonation = useMutation<
+    string,
+    Error,
+    SaveSupporterDonationInput
+  >({
+    mutationKey: ['crowdfunding', 'save-supporter-donation', { cluster }],
+    mutationFn: async ({ name, message, quantity, creator }) => {
+      const creatorPda = getCreatorPda(creator.owner);
+      const creatorAccount = await program.account.creator.fetch(creatorPda);
+      const supporterDonationPda = getSupporterDonationPda(
+        creatorPda,
+        creatorAccount.supportersCount,
+      );
+
+      const feeCollectorPublicKey =
+        process.env.NEXT_PUBLIC_FEE_COLLECTOR_PUBLIC_KEY ?? '';
+
+      const accounts = {
+        creatorAccount: creatorPda,
+        supporterDonationAccount: supporterDonationPda,
+        receiver: creator.owner,
+        feeCollector: new PublicKey(feeCollectorPublicKey),
+      };
+
+      return program.methods
+        .sendSupporterDonation(name, message, quantity)
         .accounts({ ...accounts })
         .rpc();
     },
@@ -104,10 +201,16 @@ export function useCrowdfundingProgram() {
       console.log(signature);
       transactionToast(signature);
 
-      console.log(cluster)
+      console.log(cluster);
       console.log(input.creator.username);
 
       return Promise.all([
+        client.invalidateQueries({
+          queryKey: [
+            'get-balance',
+            { endpoint: connection.rpcEndpoint, address: publicKey },
+          ],
+        }),
         client.invalidateQueries({
           queryKey: [
             'crowdfunding',
@@ -127,15 +230,15 @@ export function useCrowdfundingProgram() {
     onError: () => toast.error('Failed to run program'),
   });
 
-
-
   return {
     program,
     CROWDFUNDING_PROGRAM_ID,
     getProgramAccount,
     accounts,
     registerCreator,
-    supporterTransfer,
+    updateCreatorProfile,
+    updateCreatorPage,
+    saveSupporterDonation,
   };
 }
 
@@ -152,21 +255,24 @@ export function useCheckUsername({ username }: { username: string }) {
   });
 }
 
-export function useGetCreatorByAddress({ address }: { address: PublicKey | null }) {
+export function useGetCreatorByAddress({
+  address,
+}: {
+  address: PublicKey | null;
+}) {
   const { cluster } = useCluster();
   const { program } = useCrowdfundingProgram();
 
   return useQuery({
     queryKey: ['crowdfunding', 'get-creator-by-address', { cluster, address }],
     queryFn: () => {
-
       if (!address) {
         return null;
       }
 
       const creatorPda = getCreatorPda(address);
       return program.account.creator.fetchNullable(creatorPda);
-    }
+    },
   });
 }
 
@@ -176,7 +282,11 @@ export function useGetCreatorByUsername({ username }: { username: string }) {
   const { data: usernameRecord } = useCheckUsername({ username: username });
 
   return useQuery({
-    queryKey: ['crowdfunding', 'get-creator-by-username', { cluster, username }],
+    queryKey: [
+      'crowdfunding',
+      'get-creator-by-username',
+      { cluster, username },
+    ],
     queryFn: () => {
       if (!usernameRecord) {
         return null;
@@ -188,15 +298,18 @@ export function useGetCreatorByUsername({ username }: { username: string }) {
   });
 }
 
-export function useSupporterTransfer({ username }: { username: string }) {
+export function useSupporterDonations({ username }: { username: string }) {
   const { cluster } = useCluster();
   const { program } = useCrowdfundingProgram();
   const { data: usernameRecord } = useCheckUsername({ username: username });
 
   return useQuery({
-    queryKey: ['crowdfunding', 'list-supporter-transfers', { cluster, username }],
+    queryKey: [
+      'crowdfunding',
+      'list-supporter-donations',
+      { cluster, username },
+    ],
     queryFn: async () => {
-
       if (!usernameRecord) {
         return [];
       }
@@ -211,11 +324,17 @@ export function useSupporterTransfer({ username }: { username: string }) {
       const results = [];
 
       for (let idx = creator.supportersCount - 1; idx >= 0; idx--) {
-        const supporterTransferPda = getSupporterTransferPda(creatorPda, new BN(idx));
-        const supporterTransfer = await program.account.supporterTransfer.fetchNullable(supporterTransferPda);
+        const supporterDonationPda = getSupporterDonationPda(
+          creatorPda,
+          new BN(idx),
+        );
+        const supporterDonation =
+          await program.account.supporterDonation.fetchNullable(
+            supporterDonationPda,
+          );
 
-        if (supporterTransfer) {
-          results.push(supporterTransfer);
+        if (supporterDonation) {
+          results.push(supporterDonation);
         }
       }
       return results;
@@ -262,32 +381,33 @@ export function useSupporterTransfer({ username }: { username: string }) {
 
 const getUsernamePda = (username: string) => {
   const [usernamePda] = PublicKey.findProgramAddressSync(
-    [
-      Buffer.from('username'), Buffer.from(username)
-    ],
-    CROWDFUNDING_PROGRAM_ID
+    [Buffer.from('username'), Buffer.from(username)],
+    CROWDFUNDING_PROGRAM_ID,
   );
 
   return usernamePda;
-}
+};
 
 const getCreatorPda = (address: PublicKey) => {
   const [creatorPda] = PublicKey.findProgramAddressSync(
     [Buffer.from('creator'), address.toBuffer()],
-    CROWDFUNDING_PROGRAM_ID
+    CROWDFUNDING_PROGRAM_ID,
   );
   return creatorPda;
-}
+};
 
-const getSupporterTransferPda = (creatorPda: PublicKey, supportersCount: BN) => {
-  const [supporterTransferPda] = PublicKey.findProgramAddressSync(
+const getSupporterDonationPda = (
+  creatorPda: PublicKey,
+  supportersCount: BN,
+) => {
+  const [supporterDonationPda] = PublicKey.findProgramAddressSync(
     [
-      Buffer.from('supporterTransfer'),
+      Buffer.from('supporterDonation'),
       creatorPda.toBuffer(),
-      supportersCount.toArrayLike(Buffer, "le", 8),
+      supportersCount.toArrayLike(Buffer, 'le', 8),
     ],
-    CROWDFUNDING_PROGRAM_ID
+    CROWDFUNDING_PROGRAM_ID,
   );
 
-  return supporterTransferPda;
-}
+  return supporterDonationPda;
+};

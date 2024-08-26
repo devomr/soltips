@@ -20,9 +20,14 @@ export function AccountBalance({ address }: { address: PublicKey }) {
   const query = useGetBalance({ address });
 
   return (
-    <div className="btn btn-ghost btn-sm rounded-btn"
-      onClick={() => query.refetch()}>
-      <span className='flex items-center gap-1'><IconWallet size={18} />Balance:</span>
+    <div
+      className="btn btn-ghost btn-sm rounded-btn"
+      onClick={() => query.refetch()}
+    >
+      <span className="flex items-center gap-1">
+        <IconWallet size={18} />
+        Balance:
+      </span>
       {query.data ? <BalanceSol balance={query.data} /> : '...'}
     </div>
   );
@@ -44,7 +49,7 @@ export function AccountBalanceCheck({ address }: { address: PublicKey }) {
   }
   if (query.isError || !query.data) {
     return (
-      <div className="alert alert-warning text-warning-content/80 rounded-none flex justify-center">
+      <div className="alert alert-warning text-warning-content/80 flex justify-center rounded-none">
         <span>
           You are connected to <strong>{cluster.name}</strong> but your account
           is not found on this cluster.
@@ -156,7 +161,7 @@ export function AccountTokens({ address }: { address: PublicKey }) {
           {query.data.length === 0 ? (
             <div>No token accounts found.</div>
           ) : (
-            <table className="table border-4 rounded-lg border-separate border-base-300">
+            <table className="border-base-300 table border-separate rounded-lg border-4">
               <thead>
                 <tr>
                   <th>Public Key</th>
@@ -252,7 +257,7 @@ export function AccountTransactions({ address }: { address: PublicKey }) {
           {query.data.length === 0 ? (
             <div>No transactions found.</div>
           ) : (
-            <table className="table border-4 rounded-lg border-separate border-base-300">
+            <table className="border-base-300 table border-separate rounded-lg border-4">
               <thead>
                 <tr>
                   <th>Signature</th>
@@ -270,7 +275,7 @@ export function AccountTransactions({ address }: { address: PublicKey }) {
                         label={ellipsify(item.signature, 8)}
                       />
                     </th>
-                    <td className="font-mono text-right">
+                    <td className="text-right font-mono">
                       <ExplorerLink
                         path={`block/${item.slot}`}
                         label={item.slot.toString()}
@@ -316,7 +321,9 @@ export function AccountTransactions({ address }: { address: PublicKey }) {
 
 function BalanceSol({ balance }: { balance: number }) {
   return (
-    <span>{Math.round((balance / LAMPORTS_PER_SOL) * 100000) / 100000} SOL</span>
+    <span>
+      {Math.round((balance / LAMPORTS_PER_SOL) * 100000) / 100000} SOL
+    </span>
   );
 }
 

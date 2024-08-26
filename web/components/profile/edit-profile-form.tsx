@@ -3,7 +3,11 @@
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
-import { useCheckUsername, useCrowdfundingProgram, useGetCreatorByAddress } from '../data-access/crowdfunding-data-access';
+import {
+  useCheckUsername,
+  useCrowdfundingProgram,
+  useGetCreatorByAddress,
+} from '../data-access/crowdfunding-data-access';
 import { z } from 'zod';
 import { useQueryClient } from '@tanstack/react-query';
 import { IconCamera, IconCameraFilled } from '@tabler/icons-react';
@@ -11,10 +15,10 @@ import { IconCamera, IconCameraFilled } from '@tabler/icons-react';
 type ProfileFormData = {
   fullname: string;
   bio: string;
+  imageUrl: string;
 };
 
-type RegisterFormError = {
-  username: string;
+type ProfileFormError = {
   fullname: string;
   bio: string;
 };
@@ -22,31 +26,28 @@ type RegisterFormError = {
 const initialProfileFormData: ProfileFormData = {
   fullname: '',
   bio: '',
+  imageUrl: '',
 };
 
-const initialRegisterFormError: RegisterFormError = {
-  username: '',
+const initialProfileFormError: ProfileFormError = {
   fullname: '',
-  bio: ''
+  bio: '',
 };
 
 // Define the Zod schema for validation
 const profileFormSchema = z.object({
-  username: z.string()
-    .min(3, 'Username must be at least 3 characters')
-    .max(20, 'Username must be at most 20 characters'),
-  fullname: z.string()
+  fullname: z
+    .string()
     .min(3, 'Fullname must be at least 3 characters')
     .max(100, 'Fullname must be at most 100 characters'),
-  bio: z.string()
-    .max(250, 'Fullname must be at most 250 characters'),
+  bio: z.string().max(250, 'Fullname must be at most 250 characters'),
 });
 
 export default function EditProfileForm() {
   const { publicKey } = useWallet();
   const { data: creator } = useGetCreatorByAddress({ address: publicKey });
 
-  const { registerCreator } = useCrowdfundingProgram();
+  const { updateCreatorProfile } = useCrowdfundingProgram();
   const router = useRouter();
   const queryParams = useSearchParams();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -54,8 +55,12 @@ export default function EditProfileForm() {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [uploading, setUploading] = useState<boolean>(false);
-  const [profileFormData, setProfileFormData] = useState<ProfileFormData>(initialProfileFormData);
-  const [errors, setErrors] = useState<RegisterFormError>(initialRegisterFormError);
+  const [profileFormData, setProfileFormData] = useState<ProfileFormData>(
+    initialProfileFormData,
+  );
+  const [errors, setErrors] = useState<ProfileFormError>(
+    initialProfileFormError,
+  );
 
   useEffect(() => {
     if (creator) {
@@ -65,7 +70,7 @@ export default function EditProfileForm() {
         bio: creator.bio,
       }));
     }
-  }, [creator])
+  }, [creator]);
 
   const handleDivClick = () => {
     if (fileInputRef.current) {
@@ -100,20 +105,20 @@ export default function EditProfileForm() {
     e.preventDefault();
 
     if (!publicKey) {
-      alert("Please connect your wallet");
+      alert('Please connect your wallet');
       return;
     }
 
     // Clear previous errors
-    setErrors(initialRegisterFormError);
+    setErrors(initialProfileFormError);
 
-    // validate the registration form fields
+    // Validate the update profile form fields
     const validationResult = profileFormSchema.safeParse(profileFormData);
 
     if (validationResult.error) {
       const fieldErrors = validationResult.error.formErrors.fieldErrors;
+
       setErrors({
-        username: fieldErrors.username?.[0] || '',
         fullname: fieldErrors.fullname?.[0] || '',
         bio: fieldErrors.bio?.[0] || '',
       });
@@ -121,17 +126,20 @@ export default function EditProfileForm() {
       return;
     }
 
-    // all data is valid and the creator can be registered
-    const { fullname, bio } = profileFormData;
-    // await registerCreator.mutateAsync({ username, fullname, bio, owner: publicKey });
-
+    await updateCreatorProfile.mutateAsync({
+      ...profileFormData,
+      owner: publicKey,
+    });
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className='relative flex justify-center items-center w-20 h-20 cursor-pointer mb-4' onClick={handleDivClick} >
-        <div className='absolute bg-black z-10 opacity-40 w-full h-full rounded-full'></div>
-        <IconCameraFilled size={24} className='absolute z-20 text-white' />
+      <div
+        className="relative mb-4 flex h-20 w-20 cursor-pointer items-center justify-center"
+        onClick={handleDivClick}
+      >
+        <div className="absolute z-10 h-full w-full rounded-full bg-black opacity-40"></div>
+        <IconCameraFilled size={24} className="absolute z-20 text-white" />
         <input
           type="file"
           accept="image/*"
@@ -139,42 +147,53 @@ export default function EditProfileForm() {
           ref={fileInputRef}
           hidden
         />
-        {preview && <img src={preview} alt="Selected file" className="absolute w-20 h-20 rounded-full object-cover" />}
-
+        {preview && (
+          <img
+            src={preview}
+            alt="Selected file"
+            className="absolute h-20 w-20 rounded-full object-cover"
+          />
+        )}
       </div>
       <div className="mb-2">
-        <label htmlFor="name" className='font-bold'>Name:</label>
+        <label htmlFor="name" className="font-bold">
+          Name:
+        </label>
         <input
           type="text"
           id="fullname"
           name="fullname"
           value={profileFormData.fullname}
           placeholder="John Smith"
-          className="mt-1 w-full rounded-md bg-gray-100 px-4 py-2 text-slate-900 focus:border-slate-900 focus:bg-white"
+          className="input mt-1 w-full border-2 bg-gray-100 focus:border-slate-900 focus:bg-white focus:outline-none"
           onChange={handleChange}
           required
         />
-        {errors.fullname && <p className='text-red-600 text-sm'>{errors.fullname}</p>}
+        {errors.fullname && (
+          <p className="text-sm text-red-600">{errors.fullname}</p>
+        )}
       </div>
       <div className="mb-2">
-        <label htmlFor="bio" className='font-bold'>Bio:</label>
+        <label htmlFor="bio" className="font-bold">
+          Bio:
+        </label>
         <textarea
           id="bio"
           name="bio"
-          className="mt-1 w-full rounded-md bg-gray-100 px-4 py-2 text-slate-900 focus:border-slate-900 focus:bg-white"
+          className="textarea textarea-md mt-1 w-full border-2 bg-gray-100 text-base focus:border-slate-900 focus:bg-white focus:outline-none"
           placeholder="Blockchain Developer and coffee lover"
           value={profileFormData.bio}
           onChange={handleChange}
         ></textarea>
-        {errors.bio && <p className='text-red-600 text-sm'>{errors.bio}</p>}
+        {errors.bio && <p className="text-sm text-red-600">{errors.bio}</p>}
       </div>
       <button
         type="submit"
         className="btn btn-md rounded-btn bg-purple-800 text-white outline-none hover:bg-purple-700"
-        disabled={registerCreator.isPending}
+        disabled={updateCreatorProfile.isPending}
       >
-        Save changes {registerCreator.isPending && '...'}
+        Save changes {updateCreatorProfile.isPending && '...'}
       </button>
     </form>
   );
-};
+}

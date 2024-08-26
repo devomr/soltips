@@ -21,14 +21,14 @@ function extractLetters(name: string): string {
 export const UserAvatar = ({ name, imageUrl }: UserAvatarProps) => {
   // If an image URL is provided, use it; otherwise, extract letters from the name
   const avatarContent = imageUrl ? (
-    <div className="avatar">
-      <div className="w-20 rounded-full">
+    <div className="avatar rounded-full border-2 border-white drop-shadow">
+      <div className="w-24 rounded-full">
         <img src={imageUrl} alt={name} />
       </div>
     </div>
   ) : (
     <div className="avatar placeholder">
-      <div className="bg-neutral text-neutral-content w-20 rounded-full">
+      <div className="bg-neutral text-neutral-content w-24 rounded-full border-2 border-white drop-shadow">
         <span className="text-3xl">{extractLetters(name)}</span>
       </div>
     </div>

@@ -1,41 +1,28 @@
 import { useCluster } from '@/components/cluster/cluster-data-access';
-import { BN } from '@coral-xyz/anchor';
+import { getDonationItem } from '@/components/data-access/local-data-access';
 import { PublicKey } from '@solana/web3.js';
 
-export type SupporterTransactionProps = {
+type SupporterDonationCardProps = {
   supporter: PublicKey;
   name: string;
   message: string;
-  transferAmount: number;
-  itemType: string;
+  amount: number;
   quantity: number;
-  price: number;
-  timestamp: BN;
+  item: string;
 };
 
-const getItemTypeName = (itemType: string, quantity: number) => {
-  if (itemType === 'coffee') {
-    return quantity > 1 ? 'coffees' : 'coffee';
-  }
-  return itemType;
-}
-
-export const SupporterTransactionCard: React.FC<SupporterTransactionProps> = (
-  props: SupporterTransactionProps,
+export const SupporterDonationCard: React.FC<SupporterDonationCardProps> = (
+  props: SupporterDonationCardProps,
 ) => {
   const { getExplorerUrl } = useCluster();
-  const {
-    supporter,
-    name,
-    message,
-    transferAmount,
-    itemType,
-    quantity,
-    price,
-    timestamp } = props;
+  const { supporter, name, message, item, quantity } = props;
+
+  const donationItem = getDonationItem(item);
+  const donationItemName =
+    quantity > 1 ? donationItem.plural : donationItem.value;
 
   return (
-    <div className="rounded-md border-slate-400 bg-purple-100 p-4">
+    <div className="rounded-box bg-purple-200 p-4">
       <div className="flex justify-between">
         <div>
           <p>
@@ -47,17 +34,17 @@ export const SupporterTransactionCard: React.FC<SupporterTransactionProps> = (
                 className="link"
               >
                 <strong>{name}</strong>
-                { }
+                {}
               </a>
             ) : (
               <strong>Someone</strong>
             )}{' '}
-            bought you {quantity} {getItemTypeName(itemType, quantity)} 🎉
+            bought you {quantity} {donationItemName} 🎉
           </p>
         </div>
       </div>
       {message && (
-        <div className="mt-2 rounded-md bg-white p-2">
+        <div className="mt-2 rounded-md bg-purple-50 p-2">
           <p className="text-slate-900">{message}</p>
         </div>
       )}

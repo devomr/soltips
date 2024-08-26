@@ -7,7 +7,6 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 export default function RegisterFeature() {
-
   const router = useRouter();
   const { publicKey } = useWallet();
   const { data: creator } = useGetCreatorByAddress({ address: publicKey });
@@ -17,14 +16,17 @@ export default function RegisterFeature() {
       // redirect logged in creator to dashboard
       router.push('/dashboard');
     }
-
   }, [creator]);
 
   return (
-    <div className="mx-auto mt-10 w-[600px] max-w-full">
-      <h1 className="text-balance mb-6 text-center text-4xl font-bold text-slate-900">
+    <div className="mx-4 mt-6 max-w-full md:mx-auto md:max-w-[600px]">
+      <h1 className="text-balance mb-4 text-center text-4xl font-bold text-slate-900">
         Start Your Page
       </h1>
+      <p className="mb-8 text-center text-lg text-gray-500">
+        Unlock powerful features to help you monetize your content and get paid
+        in crypto effortlessly 💸
+      </p>
       <RegisterForm />
     </div>
   );
