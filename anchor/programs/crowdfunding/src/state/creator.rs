@@ -29,9 +29,7 @@ pub struct Creator {
 
     pub supporters_count: u64,
 
-    pub supporter_payments_count: u64,
-
-    pub withdrawn_funds: u64,
+    pub supporter_donations_amount: u64,
 
     pub bump: u8,
 }

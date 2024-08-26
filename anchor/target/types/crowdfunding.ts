@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/crowdfunding.json`.
  */
 export type Crowdfunding = {
-  "address": "5dWX9UvibREvTPvU1zC7woKngTV1YfsXAqm1rDzezNSg",
+  "address": "EWcK31xgYQpVUqQwt796Yv2DNuvnepQ9gmvdTxBRRCps",
   "metadata": {
     "name": "crowdfunding",
     "version": "0.1.0",
@@ -13,86 +13,6 @@ export type Crowdfunding = {
     "description": "Created with Anchor"
   },
   "instructions": [
-    {
-      "name": "claimSupporterTransfer",
-      "discriminator": [
-        218,
-        90,
-        45,
-        81,
-        103,
-        56,
-        116,
-        207
-      ],
-      "accounts": [
-        {
-          "name": "signer",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "creatorAccount",
-          "writable": true
-        },
-        {
-          "name": "supporterTransferPaymentAccount",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  115,
-                  117,
-                  112,
-                  112,
-                  111,
-                  114,
-                  116,
-                  101,
-                  114,
-                  84,
-                  114,
-                  97,
-                  110,
-                  115,
-                  102,
-                  101,
-                  114,
-                  80,
-                  97,
-                  121,
-                  109,
-                  101,
-                  110,
-                  116
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "creatorAccount"
-              },
-              {
-                "kind": "account",
-                "path": "creator_account.supporter_payments_count",
-                "account": "creator"
-              }
-            ]
-          }
-        },
-        {
-          "name": "systemProgram",
-          "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": [
-        {
-          "name": "amount",
-          "type": "u64"
-        }
-      ]
-    },
     {
       "name": "createCampaign",
       "discriminator": [
@@ -161,87 +81,6 @@ export type Crowdfunding = {
         {
           "name": "targetAmount",
           "type": "u64"
-        }
-      ]
-    },
-    {
-      "name": "depositSupporterTransfer",
-      "discriminator": [
-        207,
-        16,
-        199,
-        119,
-        80,
-        73,
-        19,
-        169
-      ],
-      "accounts": [
-        {
-          "name": "signer",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "creatorAccount",
-          "writable": true
-        },
-        {
-          "name": "supporterTransferAccount",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  115,
-                  117,
-                  112,
-                  112,
-                  111,
-                  114,
-                  116,
-                  101,
-                  114,
-                  84,
-                  114,
-                  97,
-                  110,
-                  115,
-                  102,
-                  101,
-                  114
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "creatorAccount"
-              },
-              {
-                "kind": "account",
-                "path": "creator_account.supporters_count",
-                "account": "creator"
-              }
-            ]
-          }
-        },
-        {
-          "name": "systemProgram",
-          "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": [
-        {
-          "name": "name",
-          "type": "string"
-        },
-        {
-          "name": "message",
-          "type": "string"
-        },
-        {
-          "name": "quantity",
-          "type": "u16"
         }
       ]
     },
@@ -344,6 +183,95 @@ export type Crowdfunding = {
         {
           "name": "bio",
           "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "sendSupporterDonation",
+      "discriminator": [
+        26,
+        199,
+        2,
+        175,
+        76,
+        14,
+        196,
+        75
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "creatorAccount",
+          "writable": true
+        },
+        {
+          "name": "supporterDonationAccount",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  117,
+                  112,
+                  112,
+                  111,
+                  114,
+                  116,
+                  101,
+                  114,
+                  68,
+                  111,
+                  110,
+                  97,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "creatorAccount"
+              },
+              {
+                "kind": "account",
+                "path": "creator_account.supporters_count",
+                "account": "creator"
+              }
+            ]
+          }
+        },
+        {
+          "name": "receiver",
+          "writable": true
+        },
+        {
+          "name": "feeCollector",
+          "writable": true
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "message",
+          "type": "string"
+        },
+        {
+          "name": "quantity",
+          "type": "u16"
         }
       ]
     },
@@ -517,29 +445,16 @@ export type Crowdfunding = {
       ]
     },
     {
-      "name": "supporterTransfer",
+      "name": "supporterDonation",
       "discriminator": [
-        194,
-        22,
-        127,
-        36,
-        178,
-        170,
+        215,
+        156,
+        141,
+        63,
+        99,
+        52,
         242,
-        78
-      ]
-    },
-    {
-      "name": "supporterTransferPayment",
-      "discriminator": [
-        86,
-        116,
-        191,
-        165,
-        23,
-        20,
-        113,
-        214
+        209
       ]
     }
   ],
@@ -556,6 +471,16 @@ export type Crowdfunding = {
     },
     {
       "code": 6002,
+      "name": "insufficientFunds",
+      "msg": "You do not have enough funds to withdraw the requested amount"
+    },
+    {
+      "code": 6003,
+      "name": "insufficientFundsAfterWithdraw",
+      "msg": "Withdrawal would reduce the account balance below the rent-exempt minimum."
+    },
+    {
+      "code": 6004,
       "name": "invalidSigner",
       "msg": "Signer does not have access to call this instruction."
     }
@@ -643,11 +568,7 @@ export type Crowdfunding = {
             "type": "u64"
           },
           {
-            "name": "supporterPaymentsCount",
-            "type": "u64"
-          },
-          {
-            "name": "withdrawnFunds",
+            "name": "supporterDonationsAmount",
             "type": "u64"
           },
           {
@@ -670,7 +591,7 @@ export type Crowdfunding = {
       }
     },
     {
-      "name": "supporterTransfer",
+      "name": "supporterDonation",
       "type": {
         "kind": "struct",
         "fields": [
@@ -691,40 +612,20 @@ export type Crowdfunding = {
             "type": "string"
           },
           {
-            "name": "transferAmount",
+            "name": "amount",
             "type": "u64"
           },
           {
-            "name": "donationItem",
+            "name": "fees",
+            "type": "u64"
+          },
+          {
+            "name": "item",
             "type": "string"
           },
           {
             "name": "quantity",
             "type": "u16"
-          },
-          {
-            "name": "timestamp",
-            "type": "i64"
-          },
-          {
-            "name": "bump",
-            "type": "u8"
-          }
-        ]
-      }
-    },
-    {
-      "name": "supporterTransferPayment",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "creator",
-            "type": "pubkey"
-          },
-          {
-            "name": "amount",
-            "type": "u64"
           },
           {
             "name": "timestamp",
