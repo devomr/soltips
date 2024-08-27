@@ -31,13 +31,12 @@ export const SupporterDonationCard: React.FC<SupporterDonationCardProps> = (
                 href={getExplorerUrl(`address/${supporter.toBase58()}`)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="link"
+                className="link font-semibold no-underline hover:underline"
               >
-                <strong>{name}</strong>
-                {}
+                {name}
               </a>
             ) : (
-              <strong>Someone</strong>
+              <span className="font-semibold">Someone</span>
             )}{' '}
             bought you {quantity} {donationItemName} 🎉
           </p>

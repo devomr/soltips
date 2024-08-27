@@ -1,8 +1,6 @@
-import { UserAvatar } from '@/components/creator/user-avatar';
-import { IconChevronRight } from '@tabler/icons-react';
 import { useEffect, useRef } from 'react';
-import Link from 'next/link';
 import { Creator } from '@/components/data-access/crowdfunding-data-access';
+import { UserAvatar } from '../user-avatar';
 
 export default function ThankYouModal({
   hide,
@@ -20,7 +18,6 @@ export default function ThankYouModal({
   thanksMessage: string;
 }) {
   const dialogRef = useRef<HTMLDialogElement | null>(null);
-  const creatorProfileUrl = `${process.env.NEXT_PUBLIC_APP_URL}/creator/${creator.username}`;
 
   useEffect(() => {
     if (!dialogRef.current) return;
@@ -44,17 +41,11 @@ export default function ThankYouModal({
             <UserAvatar name={creator.fullname} imageUrl={creator.imageUrl} />
           </div>
           <h3 className="mb-6 text-xl font-semibold lg:text-2xl">
-            You bought {creator.fullname} {quantity} {donationItem} 🎉
+            <span className="mr-1">🎉</span>
+            You bought {creator.fullname} {quantity} {donationItem}
+            <span className="ml-1">🎉</span>
           </h3>
-          {thanksMessage && <p className="mb-6 text-center">{thanksMessage}</p>}
-
-          <Link
-            href={creatorProfileUrl}
-            target="_blank"
-            className="btn btn-sm flex items-center"
-          >
-            Go to {creator.fullname}&#39;s page <IconChevronRight size={24} />
-          </Link>
+          {thanksMessage && <p className="text-center">{thanksMessage}</p>}
         </div>
       </div>
     </dialog>

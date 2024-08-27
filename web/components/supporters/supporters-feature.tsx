@@ -21,9 +21,8 @@ export default function SupportersFeature() {
   if (creator) {
     return (
       <DashboardLayout>
-        <div className="rounded-md bg-white p-4">
-          <h3 className="mb-4 text-xl font-bold">Supporters 🤝</h3>
-
+        <div className="rounded-box bg-white p-4">
+          <h2 className="mb-4 text-xl font-semibold">Supporters 🤝</h2>
           <SupportersList username={creator.username} />
         </div>
       </DashboardLayout>

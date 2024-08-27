@@ -54,13 +54,12 @@ export const SupportersList: React.FC<SupportersListProps> = ({ username }) => {
                       )}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="link"
+                      className="link no-underline hover:underline font-semibold"
                     >
-                      <strong>{supporterDonation.name}</strong>
-                      {}
+                      {supporterDonation.name}
                     </a>
                   ) : (
-                    <strong>Someone</strong>
+                    <span className="font-semibold">Someone</span>
                   )}
                 </td>
                 <td>

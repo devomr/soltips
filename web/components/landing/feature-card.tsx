@@ -23,7 +23,7 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({ title, content }) => {
         />
       </svg>
       <div className="flex flex-col">
-        <h3 className="mb-2 text-xl font-bold">{title}</h3>
+        <h3 className="mb-2 text-xl font-semibold">{title}</h3>
         <div>{content}</div>
       </div>
     </div>

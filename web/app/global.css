@@ -47,3 +47,7 @@ body {
 .wallet-adapter-button {
   font-family: inherit !important;
 }
+
+.wallet-adapter-button {
+  border-radius: 9999px !important;
+}

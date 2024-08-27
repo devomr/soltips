@@ -57,6 +57,11 @@ const availableDonationItems: DonationItem[] = [
     value: 'pizza',
     plural: 'pizzas',
   },
+  {
+    icon: '🍪',
+    value: 'cookie',
+    plural: 'cookies',
+  },
 ];
 
 export const getDonationItems = () => {

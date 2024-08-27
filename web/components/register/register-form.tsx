@@ -132,8 +132,8 @@ export default function RegisterForm() {
   return (
     <form onSubmit={handleSubmit} className="rounded-md bg-white p-6 shadow-md">
       <div className="mb-4">
-        <label htmlFor="name" className="font-semibold">
-          Name:
+        <label htmlFor="fullname" className="font-semibold">
+          Full name
         </label>
         <input
           type="text"
@@ -151,7 +151,7 @@ export default function RegisterForm() {
       </div>
       <div className="mb-4">
         <label htmlFor="username" className="font-semibold">
-          Username:
+          Username
         </label>
         <input
           type="text"
@@ -187,7 +187,10 @@ export default function RegisterForm() {
         className="btn btn-md rounded-btn w-full bg-purple-800 text-white outline-none hover:bg-purple-700"
         disabled={registerCreator.isPending}
       >
-        Create my SolTips page {registerCreator.isPending && '...'}
+        {registerCreator.isPending && (
+          <span className="loading loading-spinner"></span>
+        )}
+        Create my SolTips page
       </button>
     </form>
   );

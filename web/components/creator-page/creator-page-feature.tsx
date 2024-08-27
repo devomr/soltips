@@ -12,10 +12,10 @@ export default function CreatorPageFeature() {
   if (creator) {
     return (
       <DashboardLayout>
-        <div className="rounded-md bg-white p-4">
-          <h3 className="mb-4 text-xl font-bold">
+        <div className="rounded-box bg-white p-4">
+          <h2 className="mb-4 text-xl font-semibold">
             Customize your creator page
-          </h3>
+          </h2>
           <EditCreatorPageForm />
         </div>
       </DashboardLayout>

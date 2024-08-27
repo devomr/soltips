@@ -12,9 +12,8 @@ export default function ProfileFeature() {
   if (creator) {
     return (
       <DashboardLayout>
-        <div className="rounded-md bg-white p-4">
-          <h3 className="mb-4 text-xl font-bold">My Profile</h3>
-
+        <div className="rounded-box bg-white p-4">
+          <h2 className="mb-4 text-xl font-semibold">My Profile</h2>
           <EditProfileForm />
         </div>
       </DashboardLayout>

@@ -8,10 +8,15 @@ import {
   useGetCreatorByAddress,
 } from '../data-access/crowdfunding-data-access';
 import { z } from 'zod';
-import { IconCurrencySolana, IconEye } from '@tabler/icons-react';
+import { IconEye } from '@tabler/icons-react';
 import { lamportsToSol, solToLamports } from '../utils/conversion.util';
 import ThankYouModal from '../shared/modals/thank-you-modal';
 import { getDonationItems } from '../data-access/local-data-access';
+import {
+  THANKS_MESSAGE_MAX_LENGTH,
+  PRICE_PER_DONATION_MIN_VALUE,
+  PRICE_PER_DONATION_MAX_VALUE,
+} from '../utils/constants';
 
 type CreatorFormData = {
   isSupportersCountVisible: boolean;
@@ -41,11 +46,20 @@ const initialCreatorFormError: CreatorFormError = {
 const creatorFormSchema = z.object({
   pricePerDonation: z
     .number()
-    .min(0.0001, 'Price per donation must be at least 0.0001 SOL')
-    .max(5, 'Price per donation must be at most 5 SOL'),
+    .min(
+      PRICE_PER_DONATION_MIN_VALUE,
+      `Price per donation must be at least ${PRICE_PER_DONATION_MIN_VALUE} SOL`,
+    )
+    .max(
+      PRICE_PER_DONATION_MAX_VALUE,
+      `Price per donation must be at most ${PRICE_PER_DONATION_MAX_VALUE} SOL`,
+    ),
   thanksMessage: z
     .string()
-    .max(250, 'Thank you message must be at most 250 characters'),
+    .max(
+      THANKS_MESSAGE_MAX_LENGTH,
+      `Thank you message must be at most ${THANKS_MESSAGE_MAX_LENGTH} characters`,
+    ),
 });
 
 export default function EditCreatorPageForm() {
@@ -112,17 +126,29 @@ export default function EditCreatorPageForm() {
     setShowThankYouModal(true);
   };
 
+  const thanksMessageRemainingChars =
+    THANKS_MESSAGE_MAX_LENGTH - formData.thanksMessage.length;
+
   return (
     <>
       <form onSubmit={handleSubmit}>
         <div className="space-y-2 divide-y divide-gray-200">
           <div className="py-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-bold">Display supporters count</h2>
+            <div className="flex items-center justify-between gap-2">
+              <div>
+                <label htmlFor="supporterCountSwitch" className="font-bold">
+                  Display supporters count
+                </label>
+                <p className="text-sm text-gray-500">
+                  Set if the number of supporters should be displayed on your
+                  creator page
+                </p>
+              </div>
               <input
+                id="supporterCountSwitch"
                 type="checkbox"
                 name="isSupportersCountVisible"
-                className="toggle"
+                className="toggle self-start"
                 checked={formData.isSupportersCountVisible}
                 onChange={(e) =>
                   setFormData({
@@ -132,23 +158,22 @@ export default function EditCreatorPageForm() {
                 }
               />
             </div>
-            <p className="text-xs text-gray-400">
-              Set if the number of supporters should be displayed on your
-              creator page
-            </p>
           </div>
           <div className="py-6">
-            <h2 className="text-lg font-bold">Price per donation</h2>
-            <p className="text-xs text-gray-400">
+            <label htmlFor="pricePerDonationInput" className="font-bold">
+              Price per donation
+            </label>
+            <p className="text-sm text-gray-500">
               Set the amount in SOL you would like to receive per support
             </p>
             <input
               type="number"
+              id="pricePerDonationInput"
               name="pricePerDonation"
               className="input mt-2 w-full border-2 bg-gray-100 focus:border-slate-900 focus:bg-white focus:outline-none"
               placeholder="Enter price in SOL"
-              min={0}
-              step={0.1}
+              min={PRICE_PER_DONATION_MIN_VALUE}
+              step={0.01}
               value={formData.pricePerDonation}
               onChange={(e) =>
                 setFormData({
@@ -162,11 +187,11 @@ export default function EditCreatorPageForm() {
             )}
           </div>
           <div className="py-6">
-            <h2 className="text-lg font-bold">Donation item</h2>
-            <p className="text-xs text-gray-400">
+            <label className="font-bold">Donation item</label>
+            <p className="text-sm text-gray-500">
               Select what people will buy you as a donation
             </p>
-            <div className="mt-2 space-x-2">
+            <div className="mt-2 flex flex-wrap gap-2">
               {getDonationItems().map((item, index) => (
                 <button
                   key={index}
@@ -186,25 +211,30 @@ export default function EditCreatorPageForm() {
           </div>
 
           <div className="py-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-bold">Thank you message</h2>
+            <div className="flex items-center justify-between gap-2">
+              <div>
+                <label htmlFor="thanksMessageTextarea" className="font-bold">
+                  Thank you message
+                </label>
+                <p className="text-sm text-gray-500">
+                  Write a personalised thank you message that will be visible
+                  after a supporter will buy you something
+                </p>
+              </div>
               <button
-                className="btn btn-sm"
+                className="btn btn-sm self-start"
                 type="button"
                 onClick={handlePreviewThankYouMessage}
               >
                 <IconEye size={24} />
-                Preview message
+                Preview
               </button>
             </div>
-            <p className="text-xs text-gray-400">
-              Write a personalised thank you message that will be visible after
-              a supporter will buy you something
-            </p>
             <textarea
+              id="thanksMessageTextarea"
               name="thanksMessage"
               className="textarea textarea-md mt-2 w-full border-2 bg-gray-100 text-base focus:border-slate-900 focus:bg-white focus:outline-none"
-              placeholder="Add a thank you message for your supporters (max 250 characters)"
+              placeholder="Add a personalized thank you message for your supporters"
               maxLength={250}
               value={formData.thanksMessage}
               onChange={(e) =>
@@ -214,6 +244,9 @@ export default function EditCreatorPageForm() {
                 })
               }
             ></textarea>
+            <p className="text-sm text-gray-500">
+              Remaining characters: {thanksMessageRemainingChars}
+            </p>
             {errors.thanksMessage && (
               <p className="text-sm text-red-600">{errors.thanksMessage}</p>
             )}
@@ -225,7 +258,10 @@ export default function EditCreatorPageForm() {
           className="btn btn-md rounded-btn bg-purple-800 text-white outline-none hover:bg-purple-700"
           disabled={updateCreatorPage.isPending}
         >
-          Save changes {updateCreatorPage.isPending && '...'}
+          {updateCreatorPage.isPending && (
+            <span className="loading loading-spinner"></span>
+          )}
+          Save changes
         </button>
       </form>
       <ThankYouModal

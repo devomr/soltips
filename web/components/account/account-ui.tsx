@@ -21,12 +21,12 @@ export function AccountBalance({ address }: { address: PublicKey }) {
 
   return (
     <div
-      className="btn btn-ghost btn-sm rounded-btn"
+      className="btn btn-ghost btn-sm rounded-full"
       onClick={() => query.refetch()}
     >
       <span className="flex items-center gap-1">
         <IconWallet size={18} />
-        Balance:
+        <span className="max-sm:hidden">Balance:</span>
       </span>
       {query.data ? <BalanceSol balance={query.data} /> : '...'}
     </div>

@@ -2,16 +2,14 @@
 
 import { useParams } from 'next/navigation';
 import DonationForm from './donation-form';
-import { UserAvatar } from './user-avatar';
+import { UserAvatar } from '../shared/user-avatar';
 import {
   Creator,
   useGetCreatorByUsername,
 } from '../data-access/crowdfunding-data-access';
-import { IconUsers } from '@tabler/icons-react';
 import LoadingSpinner from '../shared/loading';
 import NoData from '../shared/no-data';
-import { ShareButton } from './share-button';
-import { DonateButton } from './donate-button';
+import { ShareButton } from '../shared/buttons/share-button';
 import { SupporterDonations } from './supporter-transfers/supporter-donations';
 
 export default function CreatorFeature() {
@@ -52,13 +50,13 @@ export default function CreatorFeature() {
         <div className="grid grid-cols-1 gap-4 pt-4 lg:grid-cols-3">
           <div className="order-2 lg:order-1 lg:col-span-2">
             <div className="rounded-box mb-4 w-full bg-white p-4">
-              <h3 className="mb-2 text-lg font-bold">About me</h3>
+              <h2 className="mb-2 text-lg font-semibold">About me</h2>
               <p>{creator.bio}</p>
             </div>
             <section className="rounded-box bg-white p-4">
-              <h3 className="mb-4 text-lg font-bold text-slate-900">
+              <h2 className="mb-4 text-lg font-semibold text-slate-900">
                 Recent supporters 🤝
-              </h3>
+              </h2>
               <SupporterDonations username={params.username} />
             </section>
           </div>
@@ -75,13 +73,13 @@ export default function CreatorFeature() {
 
 function CreatorPageHeader({ creator }: { creator: Creator }) {
   return (
-    <div className="top-[64px] z-10 bg-white lg:sticky">
+    <div className="top-[64px] z-10 bg-white md:sticky">
       <div className="mx-auto max-w-screen-xl p-4">
-        <div className="flex flex-col items-center lg:flex-row lg:justify-between">
-          <div className="flex flex-col items-center gap-4 lg:flex-row">
+        <div className="flex flex-col items-center md:flex-row md:justify-between">
+          <div className="flex flex-col items-center gap-4 md:flex-row">
             <UserAvatar name={creator.fullname} imageUrl={creator.imageUrl} />
-            <div className="flex flex-col items-center lg:items-start">
-              <h2 className="text-2xl font-semibold">{creator.fullname}</h2>
+            <div className="flex flex-col items-center md:items-start">
+              <h1 className="text-2xl font-semibold">{creator.fullname}</h1>
               {creator.isSupportersCountVisible && (
                 <p>❤️ {creator.supportersCount.toNumber()} supporter(s)</p>
               )}

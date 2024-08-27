@@ -1,33 +1,13 @@
 'use client';
 
-import { WalletButton } from '../solana/solana-provider';
 import * as React from 'react';
 import { ReactNode, Suspense, useEffect, useRef } from 'react';
-
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-
 import { AccountChecker } from '../account/account-ui';
-import {
-  ClusterChecker,
-  ClusterUiSelect,
-  ExplorerLink,
-} from '../cluster/cluster-ui';
+import { ClusterChecker, ExplorerLink } from '../cluster/cluster-ui';
 import toast, { Toaster } from 'react-hot-toast';
 import { Navbar } from '../navbar/navbar';
-import { Creator } from '../data-access/crowdfunding-data-access';
-import { UserAvatar } from '../creator/user-avatar';
-import confetti from 'canvas-confetti';
 
-export function UiLayout({
-  children,
-  links,
-}: {
-  children: ReactNode;
-  links: { label: string; path: string }[];
-}) {
-  const pathname = usePathname();
-
+export function UiLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-full flex-col bg-gray-100">
       <Navbar />

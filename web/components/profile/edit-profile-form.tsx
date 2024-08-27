@@ -156,8 +156,8 @@ export default function EditProfileForm() {
         )}
       </div>
       <div className="mb-2">
-        <label htmlFor="name" className="font-bold">
-          Name:
+        <label htmlFor="fullname" className="font-bold">
+          Full name
         </label>
         <input
           type="text"
@@ -175,7 +175,7 @@ export default function EditProfileForm() {
       </div>
       <div className="mb-2">
         <label htmlFor="bio" className="font-bold">
-          Bio:
+          What are you creating?
         </label>
         <textarea
           id="bio"
@@ -192,7 +192,10 @@ export default function EditProfileForm() {
         className="btn btn-md rounded-btn bg-purple-800 text-white outline-none hover:bg-purple-700"
         disabled={updateCreatorProfile.isPending}
       >
-        Save changes {updateCreatorProfile.isPending && '...'}
+        {updateCreatorProfile.isPending && (
+          <span className="loading loading-spinner"></span>
+        )}
+        Save changes
       </button>
     </form>
   );

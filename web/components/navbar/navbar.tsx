@@ -7,7 +7,7 @@ export function Navbar() {
   const { publicKey } = useWallet();
 
   return (
-    <nav className="navbar sticky top-0 z-[100] flex-col space-y-2 shadow-md md:flex-row md:space-y-0 md:px-8 bg-white">
+    <nav className="navbar sticky top-0 z-[10] flex-col space-y-2 bg-white shadow-md md:z-[20] md:flex-row md:space-y-0 md:px-8">
       <div className="flex-1">
         <Link className="cursor-pointer normal-case" href="/">
           <span className="whitespace-nowrap text-xl font-bold"> SolTips </span>

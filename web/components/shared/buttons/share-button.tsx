@@ -25,7 +25,7 @@ export function ShareButton({ username }: ShareButtonProps) {
       <div
         tabIndex={0}
         role="button"
-        className="btn m-1 rounded-full text-base"
+        className="btn btn-block rounded-full text-base"
       >
         <IconShare3 size={24} /> Share
       </div>

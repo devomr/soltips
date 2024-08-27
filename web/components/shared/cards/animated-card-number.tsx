@@ -17,9 +17,9 @@ const AnimatedCardNumber = ({
   icon,
 }: AnimatedCardNumberProps) => {
   return (
-    <div className="rounded-box bg-white p-4 drop-shadow dark:bg-gray-800">
-      <div className="mb-1 flex items-center">
-        <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+    <div className="rounded-box bg-white p-4 drop-shadow">
+      <div className="mb-2 flex items-center">
+        <div className="text-2xl font-semibold text-gray-900">
           {value} {suffix}
         </div>
       </div>
