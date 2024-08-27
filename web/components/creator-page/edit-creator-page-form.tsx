@@ -196,7 +196,7 @@ export default function EditCreatorPageForm() {
                 <button
                   key={index}
                   type="button"
-                  className={`btn btn-sm ${formData.donationItem === item.value ? 'btn-active' : ''}`}
+                  className={`btn btn-sm rounded-full ${formData.donationItem === item.value ? 'btn-active' : ''}`}
                   onClick={() =>
                     setFormData({
                       ...formData,
@@ -222,7 +222,7 @@ export default function EditCreatorPageForm() {
                 </p>
               </div>
               <button
-                className="btn btn-sm self-start"
+                className="btn btn-sm self-start rounded-full"
                 type="button"
                 onClick={handlePreviewThankYouMessage}
               >
@@ -255,7 +255,7 @@ export default function EditCreatorPageForm() {
 
         <button
           type="submit"
-          className="btn btn-md rounded-btn bg-purple-800 text-white outline-none hover:bg-purple-700"
+          className="btn btn-md rounded-full bg-purple-800 text-white outline-none hover:bg-purple-700"
           disabled={updateCreatorPage.isPending}
         >
           {updateCreatorPage.isPending && (

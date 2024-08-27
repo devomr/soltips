@@ -189,7 +189,7 @@ export default function EditProfileForm() {
       </div>
       <button
         type="submit"
-        className="btn btn-md rounded-btn bg-purple-800 text-white outline-none hover:bg-purple-700"
+        className="btn btn-md rounded-full bg-purple-800 text-white outline-none hover:bg-purple-700"
         disabled={updateCreatorProfile.isPending}
       >
         {updateCreatorProfile.isPending && (

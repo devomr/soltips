@@ -20,7 +20,8 @@ export function AccountBalance({ address }: { address: PublicKey }) {
   const query = useGetBalance({ address });
 
   return (
-    <div
+    <button
+      title="Click to refresh"
       className="btn btn-ghost btn-sm rounded-full"
       onClick={() => query.refetch()}
     >
@@ -29,7 +30,7 @@ export function AccountBalance({ address }: { address: PublicKey }) {
         <span className="max-sm:hidden">Balance:</span>
       </span>
       {query.data ? <BalanceSol balance={query.data} /> : '...'}
-    </div>
+    </button>
   );
 }
 export function AccountChecker() {
