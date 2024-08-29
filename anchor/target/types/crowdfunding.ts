@@ -27,12 +27,16 @@ export type Crowdfunding = {
       ],
       "accounts": [
         {
-          "name": "owner",
+          "name": "signer",
           "writable": true,
           "signer": true
         },
         {
-          "name": "campaign",
+          "name": "creatorAccount",
+          "writable": true
+        },
+        {
+          "name": "campaignAccount",
           "writable": true,
           "pda": {
             "seeds": [
@@ -51,11 +55,12 @@ export type Crowdfunding = {
               },
               {
                 "kind": "account",
-                "path": "owner"
+                "path": "creatorAccount"
               },
               {
-                "kind": "arg",
-                "path": "id"
+                "kind": "account",
+                "path": "creator_account.campaigns_count",
+                "account": "creator"
               }
             ]
           }
@@ -67,10 +72,6 @@ export type Crowdfunding = {
       ],
       "args": [
         {
-          "name": "id",
-          "type": "u64"
-        },
-        {
           "name": "name",
           "type": "string"
         },
@@ -81,6 +82,10 @@ export type Crowdfunding = {
         {
           "name": "targetAmount",
           "type": "u64"
+        },
+        {
+          "name": "isTargetAmountVisible",
+          "type": "bool"
         }
       ]
     },
@@ -98,6 +103,40 @@ export type Crowdfunding = {
       ],
       "accounts": [],
       "args": []
+    },
+    {
+      "name": "makeCampaignDonation",
+      "discriminator": [
+        187,
+        7,
+        234,
+        52,
+        71,
+        122,
+        227,
+        97
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "campaignAccount",
+          "writable": true
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
     },
     {
       "name": "registerCreator",
@@ -402,6 +441,40 @@ export type Crowdfunding = {
           "type": "string"
         }
       ]
+    },
+    {
+      "name": "withdrawCampaignFunds",
+      "discriminator": [
+        169,
+        74,
+        69,
+        245,
+        79,
+        226,
+        98,
+        206
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "campaignAccount",
+          "writable": true
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -492,10 +565,6 @@ export type Crowdfunding = {
         "kind": "struct",
         "fields": [
           {
-            "name": "id",
-            "type": "u64"
-          },
-          {
             "name": "owner",
             "type": "pubkey"
           },
@@ -514,6 +583,14 @@ export type Crowdfunding = {
           {
             "name": "amountDonated",
             "type": "u64"
+          },
+          {
+            "name": "amountWithdrawn",
+            "type": "u64"
+          },
+          {
+            "name": "isTargetAmountVisible",
+            "type": "bool"
           },
           {
             "name": "bump",
@@ -565,6 +642,10 @@ export type Crowdfunding = {
           },
           {
             "name": "supportersCount",
+            "type": "u64"
+          },
+          {
+            "name": "campaignsCount",
             "type": "u64"
           },
           {

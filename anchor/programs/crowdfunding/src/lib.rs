@@ -13,6 +13,7 @@ declare_id!("EWcK31xgYQpVUqQwt796Yv2DNuvnepQ9gmvdTxBRRCps");
 
 #[program]
 pub mod crowdfunding {
+
     use super::*;
 
     pub fn initialize(_ctx: Context<Initialize>) -> Result<()> {
@@ -67,12 +68,32 @@ pub mod crowdfunding {
 
     pub fn create_campaign(
         context: Context<CreateCampaign>,
-        id: u64,
         name: String,
         description: String,
         target_amount: u64,
+        is_target_amount_visible: bool,
     ) -> Result<()> {
-        instructions::create_campaign::save_campaign(context, id, name, description, target_amount)
+        instructions::create_campaign::save_campaign(
+            context,
+            name,
+            description,
+            target_amount,
+            is_target_amount_visible,
+        )
+    }
+
+    pub fn make_campaign_donation(
+        context: Context<MakeCampaignDonation>,
+        amount: u64,
+    ) -> Result<()> {
+        instructions::make_campaign_donation::make_donation(context, amount)
+    }
+
+    pub fn withdraw_campaign_funds(
+        context: Context<WithdrawCampaignFunds>,
+        amount: u64,
+    ) -> Result<()> {
+        instructions::withdraw_campaign_funds::withdraw_funds(context, amount)
     }
 }
 

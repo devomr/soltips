@@ -50,6 +50,7 @@ pub fn register_new_creator(
         donation_item: DEFAULT_DONATION_ITEM.to_string(),
         thanks_message: "".to_owned(),
         supporters_count: 0,
+        campaigns_count: 0,
         supporter_donations_amount: 0,
         owner: context.accounts.signer.key(),
         bump: context.bumps.creator_account,

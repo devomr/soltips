@@ -28,6 +28,7 @@ pub struct Creator {
     pub thanks_message: String,
 
     pub supporters_count: u64,
+    pub campaigns_count: u64,
 
     pub supporter_donations_amount: u64,
 

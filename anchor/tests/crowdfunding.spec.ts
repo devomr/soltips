@@ -1,7 +1,7 @@
 import * as anchor from '@coral-xyz/anchor';
 import { BN, Program } from '@coral-xyz/anchor';
 import { Crowdfunding } from '../target/types/crowdfunding';
-import { makeKeypairs } from '@solana-developers/helpers';
+import { confirmTransaction, makeKeypairs } from '@solana-developers/helpers';
 import { randomBytes } from 'crypto';
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import {
@@ -49,6 +49,23 @@ const getSupporterDonationPda = (
   );
 
   return supporterDonationPda;
+};
+
+const getCampaignPda = (
+  programId: PublicKey,
+  creatorPda: PublicKey,
+  campaignsCount: BN,
+) => {
+  const [campaignPda] = PublicKey.findProgramAddressSync(
+    [
+      Buffer.from('campaign'),
+      creatorPda.toBuffer(),
+      campaignsCount.toArrayLike(Buffer, 'le', 8),
+    ],
+    programId,
+  );
+
+  return campaignPda;
 };
 
 describe('crowdfunding', () => {
@@ -108,7 +125,7 @@ describe('crowdfunding', () => {
     accounts.creatorAccount = creatorPda;
     accounts.creatorUsernameAccount = creatorUsernamePda;
 
-    await program.methods
+    const transactionSignature = await program.methods
       .registerCreator(
         creatorObject.username,
         creatorObject.fullname,
@@ -117,6 +134,8 @@ describe('crowdfunding', () => {
       .accounts({ ...accounts })
       .signers([creatorWallet])
       .rpc();
+
+    await confirmTransaction(connection, transactionSignature);
 
     // check if the Creator account contains the correct data
     const creatorAccount = await program.account.creator.fetch(creatorPda);
@@ -155,7 +174,7 @@ describe('crowdfunding', () => {
     creatorObject.bio = 'new bio';
     creatorObject.imageUrl = 'https://example.com/image.jpg';
 
-    await program.methods
+    const transactionSignature = await program.methods
       .updateCreatorProfile(
         creatorObject.fullname,
         creatorObject.bio,
@@ -164,6 +183,8 @@ describe('crowdfunding', () => {
       .accounts({ ...accounts })
       .signers([creatorWallet])
       .rpc();
+
+    await confirmTransaction(connection, transactionSignature);
 
     // check our Creator account contains the correct data
     const creatorAccount = await program.account.creator.fetch(creatorPda);
@@ -188,7 +209,7 @@ describe('crowdfunding', () => {
       donationItem: 'pizza',
       thanksMessage: 'thanks',
     };
-    await program.methods
+    const transactionSignature = await program.methods
       .updateCreatorPage(
         pageSettings.isSupportersCountVisible,
         pageSettings.pricePerDonation,
@@ -198,6 +219,8 @@ describe('crowdfunding', () => {
       .accounts({ ...accounts })
       .signers([creatorWallet])
       .rpc();
+
+    await confirmTransaction(connection, transactionSignature);
 
     // check our Creator account contains the correct data
     const creatorAccount = await program.account.creator.fetch(creatorPda);
@@ -239,7 +262,7 @@ describe('crowdfunding', () => {
     accounts.signer = supporterWallet.publicKey;
     accounts.supporterDonationAccount = supporterDonationPda;
 
-    await program.methods
+    const transactionSignature = await program.methods
       .sendSupporterDonation(
         supporterObject.name,
         supporterObject.message,
@@ -253,6 +276,8 @@ describe('crowdfunding', () => {
       })
       .signers([supporterWallet])
       .rpc();
+
+    await confirmTransaction(connection, transactionSignature);
 
     // Fetch the Supporter Donation account and verify its content
     const supporterDonationAccount =
@@ -289,40 +314,254 @@ describe('crowdfunding', () => {
     expect(creatorBalanceAfter).toBe(creatorBalanceBefore + amountWithoutFees);
   });
 
-  // test("Create a new crowdfunding campaign", async () => {
-  //   const campaignId = getRandomBigNumber();
+  test('Create a new crowdfunding campaign', async () => {
+    const creatorPda = getCreatorPda(
+      program.programId,
+      creatorWallet.publicKey,
+    );
+    const creatorAccount = await program.account.creator.fetch(creatorPda);
+    const campaignsCountBefore = creatorAccount.campaignsCount.toNumber();
 
-  //   const campaign = PublicKey.findProgramAddressSync(
-  //     [
-  //       Buffer.from("campaign"),
-  //       accounts.owner.toBuffer(),
-  //       campaignId.toArrayLike(Buffer, "le", 8),
-  //     ],
-  //     program.programId
-  //   )[0];
+    // Derive the PDA for the Campaign account based on the current campaigns count
+    const campaignPda = getCampaignPda(
+      program.programId,
+      creatorPda,
+      creatorAccount.campaignsCount,
+    );
 
-  //   accounts.campaign = campaign;
+    accounts.signer = creatorWallet.publicKey;
+    accounts.campaignAccount = campaignPda;
 
-  //   const name = "My Test Campaign";
-  //   const description = "This is a test campaign";
-  //   const targetAmount = new BN(1_000);
+    const name = 'My Test Campaign';
+    const description = 'This is a test campaign';
+    const targetAmount = new BN(1_000_000_000); // 1 SOL
+    const isTargetAmountVisible = true;
 
-  //   const transactionSignature = await program.methods
-  //     .createCampaign(campaignId, name, description, targetAmount)
-  //     .accounts({ ...accounts })
-  //     .signers([alice])
-  //     .rpc();
+    const transactionSignature = await program.methods
+      .createCampaign(name, description, targetAmount, isTargetAmountVisible)
+      .accounts({
+        creatorAccount: creatorPda,
+        ...accounts,
+      })
+      .signers([creatorWallet])
+      .rpc();
 
-  //   await confirmTransaction(connection, transactionSignature);
+    await confirmTransaction(connection, transactionSignature);
 
-  //   // check our Campaign account contains the correct data
-  //   const campaignAccount = await program.account.campaign.fetch(campaign);
-  //   console.log("Campaign account: ", campaignAccount);
+    // check our Campaign account contains the correct data
+    const campaignAccount = await program.account.campaign.fetch(campaignPda);
+    const zeroBN = new BN(0);
 
-  //   expect(campaignAccount.owner.equals(alice.publicKey)).toBe(true);
-  //   expect(campaignAccount.id.eq(campaignId));
-  //   expect(campaignAccount.name).toBe(name);
-  //   expect(campaignAccount.description).toBe(description);
-  //   expect(campaignAccount.targetAmount.eq(targetAmount));
-  // });
+    expect(campaignAccount.owner.equals(creatorWallet.publicKey)).toBe(true);
+    expect(campaignAccount.name).toBe(name);
+    expect(campaignAccount.description).toBe(description);
+    expect(campaignAccount.targetAmount.eq(targetAmount)).toBe(true);
+    expect(campaignAccount.amountDonated.eq(zeroBN)).toBe(true);
+    expect(campaignAccount.amountWithdrawn.eq(zeroBN)).toBe(true);
+    expect(campaignAccount.isTargetAmountVisible).toBe(true);
+
+    // Check if the campaigns count have been incremented
+    const updatedCeatorAccount =
+      await program.account.creator.fetch(creatorPda);
+
+    expect(updatedCeatorAccount.campaignsCount.toNumber()).toBe(
+      campaignsCountBefore + 1,
+    );
+  });
+
+  test('Donate funds to an existing campaign', async () => {
+    const creatorPda = getCreatorPda(
+      program.programId,
+      creatorWallet.publicKey,
+    );
+    const creatorAccount = await program.account.creator.fetch(creatorPda);
+    const campaignsCount = creatorAccount.campaignsCount.toNumber();
+    const existingCampaignIndex = new BN(campaignsCount - 1);
+
+    // Derive the PDA for the Campaign account based on the current campaigns count
+    const campaignPda = getCampaignPda(
+      program.programId,
+      creatorPda,
+      existingCampaignIndex,
+    );
+    const campaignAccount = await program.account.campaign.fetch(campaignPda);
+    const amountDonatedBefore = campaignAccount.amountDonated;
+    const campaignBalanceBefore = await connection.getBalance(campaignPda);
+
+    console.log('campaignBalanceBefore', campaignBalanceBefore);
+
+    accounts.signer = supporterWallet.publicKey;
+
+    const donationAmount = new BN(500_000_000); // 0.5 SOL
+
+    const transactionSignature = await program.methods
+      .makeCampaignDonation(donationAmount)
+      .accounts({
+        campaignAccount: campaignPda,
+        ...accounts,
+      })
+      .signers([supporterWallet])
+      .rpc();
+
+    await confirmTransaction(connection, transactionSignature);
+
+    const updatedCampaignAccount =
+      await program.account.campaign.fetch(campaignPda);
+
+    // Check if the campaign balance have been increased
+    const campaignBalanceAfter = await connection.getBalance(campaignPda);
+    console.log('campaignBalanceAfter', campaignBalanceAfter);
+
+    expect(campaignBalanceAfter).toBe(
+      campaignBalanceBefore + donationAmount.toNumber(),
+    );
+
+    // Check if the amount donated have been increased
+    const expectedAmountDonated = amountDonatedBefore.add(donationAmount);
+    expect(updatedCampaignAccount.amountDonated.eq(expectedAmountDonated)).toBe(
+      true,
+    );
+  });
+
+  test('Withdraw funds from existing campaign by a not authorized signer', async () => {
+    const creatorPda = getCreatorPda(
+      program.programId,
+      creatorWallet.publicKey,
+    );
+    const creatorAccount = await program.account.creator.fetch(creatorPda);
+    const campaignsCount = creatorAccount.campaignsCount.toNumber();
+    const existingCampaignIndex = new BN(campaignsCount - 1);
+
+    // Derive the PDA for the Campaign account based on the current campaigns count
+    const campaignPda = getCampaignPda(
+      program.programId,
+      creatorPda,
+      existingCampaignIndex,
+    );
+
+    // ONLY the creator wallet must be allowed to withdraw
+    accounts.signer = supporterWallet.publicKey;
+
+    const withdrawAmount = new BN(200_000_000); // 0.2 SOL
+
+    try {
+      const transactionSignature = await program.methods
+        .withdrawCampaignFunds(withdrawAmount)
+        .accounts({
+          campaignAccount: campaignPda,
+          ...accounts,
+        })
+        .signers([supporterWallet])
+        .rpc();
+
+      await confirmTransaction(connection, transactionSignature);
+
+      throw new Error('Expected error was not thrown');
+    } catch (error) {
+      expect(error).toBeInstanceOf(anchor.AnchorError);
+
+      const anchorError = error as anchor.AnchorError;
+      expect(anchorError.error.errorCode.code).toBe('InvalidSigner');
+    }
+  });
+
+  test('Withdraw more funds than available from existing campaign', async () => {
+    const creatorPda = getCreatorPda(
+      program.programId,
+      creatorWallet.publicKey,
+    );
+    const creatorAccount = await program.account.creator.fetch(creatorPda);
+    const campaignsCount = creatorAccount.campaignsCount.toNumber();
+    const existingCampaignIndex = new BN(campaignsCount - 1);
+
+    // Derive the PDA for the Campaign account based on the current campaigns count
+    const campaignPda = getCampaignPda(
+      program.programId,
+      creatorPda,
+      existingCampaignIndex,
+    );
+    const campaignBalance = await connection.getBalance(campaignPda);
+
+    console.log('campaignBalance', campaignBalance);
+
+    accounts.signer = creatorWallet.publicKey;
+
+    const withdrawAmount = new BN(campaignBalance + 200_000_000);
+
+    try {
+      const transactionSignature = await program.methods
+        .withdrawCampaignFunds(withdrawAmount)
+        .accounts({
+          campaignAccount: campaignPda,
+          ...accounts,
+        })
+        .signers([creatorWallet])
+        .rpc();
+
+      await confirmTransaction(connection, transactionSignature);
+
+      throw new Error('Expected error was not thrown');
+    } catch (error) {
+      expect(error).toBeInstanceOf(anchor.AnchorError);
+
+      const anchorError = error as anchor.AnchorError;
+      expect(anchorError.error.errorCode.code).toBe(
+        'InsufficientFundsAfterWithdraw',
+      );
+    }
+  });
+
+  test('Withdraw funds from existing campaign', async () => {
+    const creatorBalanceBefore = await connection.getBalance(
+      creatorWallet.publicKey,
+    );
+
+    const creatorPda = getCreatorPda(
+      program.programId,
+      creatorWallet.publicKey,
+    );
+    const creatorAccount = await program.account.creator.fetch(creatorPda);
+    const campaignsCount = creatorAccount.campaignsCount.toNumber();
+    const existingCampaignIndex = new BN(campaignsCount - 1);
+
+    // Derive the PDA for the Campaign account based on the current campaigns count
+    const campaignPda = getCampaignPda(
+      program.programId,
+      creatorPda,
+      existingCampaignIndex,
+    );
+    const campaignBalanceBefore = await connection.getBalance(campaignPda);
+
+    accounts.signer = creatorWallet.publicKey;
+
+    const withdrawAmount = new BN(200_000_000); // 0.2 SOL
+
+    const transactionSignature = await program.methods
+      .withdrawCampaignFunds(withdrawAmount)
+      .accounts({
+        campaignAccount: campaignPda,
+        ...accounts,
+      })
+      .signers([creatorWallet])
+      .rpc();
+
+    await confirmTransaction(connection, transactionSignature);
+
+    // Check if the Creator balance have been increased
+    const creatorBalanceAfter = await connection.getBalance(
+      creatorWallet.publicKey,
+    );
+    // Not checking exact balance match becase the transaction fees are applied
+    expect(creatorBalanceAfter).toBeGreaterThan(creatorBalanceBefore);
+
+    // Check the remaining campaign balance
+    const campaignBalanceAfter = await connection.getBalance(campaignPda);
+    expect(campaignBalanceAfter).toBe(
+      campaignBalanceBefore - withdrawAmount.toNumber(),
+    );
+
+    // Check if the amount withdrawn have been increased
+    const campaignAccount = await program.account.campaign.fetch(campaignPda);
+    expect(campaignAccount.amountWithdrawn.eq(withdrawAmount)).toBe(true);
+  });
 });

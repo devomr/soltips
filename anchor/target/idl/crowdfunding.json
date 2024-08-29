@@ -21,12 +21,16 @@
       ],
       "accounts": [
         {
-          "name": "owner",
+          "name": "signer",
           "writable": true,
           "signer": true
         },
         {
-          "name": "campaign",
+          "name": "creator_account",
+          "writable": true
+        },
+        {
+          "name": "campaign_account",
           "writable": true,
           "pda": {
             "seeds": [
@@ -45,11 +49,12 @@
               },
               {
                 "kind": "account",
-                "path": "owner"
+                "path": "creator_account"
               },
               {
-                "kind": "arg",
-                "path": "id"
+                "kind": "account",
+                "path": "creator_account.campaigns_count",
+                "account": "Creator"
               }
             ]
           }
@@ -61,10 +66,6 @@
       ],
       "args": [
         {
-          "name": "id",
-          "type": "u64"
-        },
-        {
           "name": "name",
           "type": "string"
         },
@@ -75,6 +76,10 @@
         {
           "name": "target_amount",
           "type": "u64"
+        },
+        {
+          "name": "is_target_amount_visible",
+          "type": "bool"
         }
       ]
     },
@@ -92,6 +97,40 @@
       ],
       "accounts": [],
       "args": []
+    },
+    {
+      "name": "make_campaign_donation",
+      "discriminator": [
+        187,
+        7,
+        234,
+        52,
+        71,
+        122,
+        227,
+        97
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "campaign_account",
+          "writable": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
     },
     {
       "name": "register_creator",
@@ -396,6 +435,40 @@
           "type": "string"
         }
       ]
+    },
+    {
+      "name": "withdraw_campaign_funds",
+      "discriminator": [
+        169,
+        74,
+        69,
+        245,
+        79,
+        226,
+        98,
+        206
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "campaign_account",
+          "writable": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -486,10 +559,6 @@
         "kind": "struct",
         "fields": [
           {
-            "name": "id",
-            "type": "u64"
-          },
-          {
             "name": "owner",
             "type": "pubkey"
           },
@@ -508,6 +577,14 @@
           {
             "name": "amount_donated",
             "type": "u64"
+          },
+          {
+            "name": "amount_withdrawn",
+            "type": "u64"
+          },
+          {
+            "name": "is_target_amount_visible",
+            "type": "bool"
           },
           {
             "name": "bump",
@@ -559,6 +636,10 @@
           },
           {
             "name": "supporters_count",
+            "type": "u64"
+          },
+          {
+            "name": "campaigns_count",
             "type": "u64"
           },
           {
