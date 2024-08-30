@@ -28,6 +28,21 @@ export default function ThankYouModal({
     }
   }, [show, dialogRef]);
 
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        hide(); // Call the hide function when the Escape key is pressed
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    // Clean up the event listener when the component is unmounted
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [hide]); // Add hide to the dependency array
+
   return (
     <dialog className="modal" ref={dialogRef}>
       <div className="modal-box w-11/12 max-w-2xl">
@@ -48,6 +63,9 @@ export default function ThankYouModal({
           {thanksMessage && <p className="text-center">{thanksMessage}</p>}
         </div>
       </div>
+      <form method="dialog" className="modal-backdrop" onSubmit={hide}>
+        <button>close</button>
+      </form>
     </dialog>
   );
 }

@@ -5,7 +5,11 @@ import { useGetCreatorByAddress } from '../data-access/crowdfunding-data-access'
 import DashboardLayout from './dashboard-layout';
 import { UserAvatar } from '../shared/user-avatar';
 import Link from 'next/link';
-import { IconCurrencySolana, IconHeart } from '@tabler/icons-react';
+import {
+  IconCurrencySolana,
+  IconHeart,
+  IconMoneybag,
+} from '@tabler/icons-react';
 import AnimatedCardNumber from '../shared/cards/animated-card-number';
 import { ShareButton } from '../shared/buttons/share-button';
 import { lamportsToSol } from '../utils/conversion.util';
@@ -66,6 +70,11 @@ export default function DashboardFeature() {
               value={creator.supportersCount.toNumber()}
               label="Supporters"
               icon={<IconHeart size={24} />}
+            />
+            <AnimatedCardNumber
+              value={creator.campaignsCount.toNumber()}
+              label="Campaigns"
+              icon={<IconMoneybag size={24} />}
             />
           </div>
         </div>

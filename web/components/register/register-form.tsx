@@ -184,7 +184,7 @@ export default function RegisterForm() {
       </div>
       <button
         type="submit"
-        className="btn btn-md rounded-btn w-full bg-purple-800 text-white outline-none hover:bg-purple-700"
+        className="btn btn-md w-full rounded-full bg-purple-800 text-white outline-none hover:bg-purple-700"
         disabled={registerCreator.isPending}
       >
         {registerCreator.isPending && (

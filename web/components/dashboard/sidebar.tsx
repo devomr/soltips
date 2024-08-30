@@ -97,7 +97,7 @@ const Sidebar = () => {
               <h2 className="mb-3 text-sm font-semibold uppercase text-gray-400">
                 {group.title}
               </h2>
-              <div className="space-y-2">
+              <div className="space-y-1">
                 {group.links.map((link, linkIndex) => (
                   <Link
                     href={link.href}

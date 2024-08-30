@@ -58,11 +58,35 @@ export function AppModal({
     }
   }, [show, dialogRef]);
 
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        hide(); // Call the hide function when the Escape key is pressed
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    // Clean up the event listener when the component is unmounted
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [hide]); // Add hide to the dependency array
+
   return (
     <dialog className="modal" ref={dialogRef}>
-      <div className="modal-box space-y-5">
-        <h3 className="text-lg font-bold">{title}</h3>
-        {children}
+      <div className="modal-box">
+        <form method="dialog" onSubmit={hide}>
+          <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+            ✕
+          </button>
+        </form>
+
+        <div>
+          <h3 className="mb-4 text-lg font-bold">{title}</h3>
+          {children}
+        </div>
+
         <div className="modal-action">
           <div className="join space-x-2">
             {submit ? (
@@ -74,12 +98,15 @@ export function AppModal({
                 {submitLabel || 'Save'}
               </button>
             ) : null}
-            <button onClick={hide} className="btn">
+            <button onClick={hide} className="btn" type="button">
               Close
             </button>
           </div>
         </div>
       </div>
+      <form method="dialog" className="modal-backdrop" onSubmit={hide}>
+        <button>close</button>
+      </form>
     </dialog>
   );
 }
