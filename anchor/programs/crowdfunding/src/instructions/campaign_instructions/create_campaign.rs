@@ -30,6 +30,7 @@ pub fn save_campaign(
     is_target_amount_visible: bool,
 ) -> Result<()> {
     context.accounts.campaign_account.set_inner(Campaign {
+        id: context.accounts.creator_account.campaigns_count,
         name,
         description,
         target_amount,

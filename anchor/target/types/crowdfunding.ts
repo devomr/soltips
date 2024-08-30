@@ -565,6 +565,10 @@ export type Crowdfunding = {
         "kind": "struct",
         "fields": [
           {
+            "name": "id",
+            "type": "u64"
+          },
+          {
             "name": "owner",
             "type": "pubkey"
           },

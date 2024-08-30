@@ -11,9 +11,9 @@ pub enum ErrorCode {
     #[msg("You do not have enough funds to withdraw the requested amount")]
     InsufficientFunds,
 
-    #[msg("Withdrawal would reduce the account balance below the rent-exempt minimum.")]
+    #[msg("Withdrawal would reduce the account balance below the rent-exempt minimum")]
     InsufficientFundsAfterWithdraw,
 
-    #[msg("Signer does not have access to call this instruction.")]
+    #[msg("Signer does not have access to call this instruction")]
     InvalidSigner,
 }

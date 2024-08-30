@@ -353,6 +353,7 @@ describe('crowdfunding', () => {
     const zeroBN = new BN(0);
 
     expect(campaignAccount.owner.equals(creatorWallet.publicKey)).toBe(true);
+    expect(campaignAccount.id).toBe(campaignsCountBefore);
     expect(campaignAccount.name).toBe(name);
     expect(campaignAccount.description).toBe(description);
     expect(campaignAccount.targetAmount.eq(targetAmount)).toBe(true);
