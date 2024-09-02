@@ -22,6 +22,7 @@ export type Creator = {
   isSupportersCountVisible: boolean;
   pricePerDonation: BN;
   donationItem: string;
+  themeColor: string;
   supportersCount: BN;
   supporterDonationsAmount: BN;
   thanksMessage: string;
@@ -69,6 +70,7 @@ interface UpdateCreatorPageInput {
   isSupportersCountVisible: boolean;
   pricePerDonation: number;
   donationItem: string;
+  themeColor: string;
   thanksMessage: string;
 }
 
@@ -130,6 +132,9 @@ export function useCrowdfundingProgram() {
         owner: owner,
         usernameAccount: usernamePda,
       };
+      console.log(cluster.name);
+      console.log(cluster.endpoint);
+      console.log(CROWDFUNDING_PROGRAM_ID.toBase58());
 
       return program.methods
         .registerCreator(username, fullname, bio)
@@ -174,6 +179,7 @@ export function useCrowdfundingProgram() {
       isSupportersCountVisible,
       pricePerDonation,
       donationItem,
+      themeColor,
       thanksMessage,
       owner,
     }) => {
@@ -188,6 +194,7 @@ export function useCrowdfundingProgram() {
           isSupportersCountVisible,
           new BN(pricePerDonation),
           donationItem,
+          themeColor,
           thanksMessage,
         )
         .accounts({ ...accounts })

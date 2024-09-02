@@ -72,7 +72,7 @@ const DonationForm: React.FC<DonationFormProps> = ({ creator }) => {
         Buy {creator.fullname} some {donationItem.icon}
       </h2>
       <form onSubmit={handleSubmit} className="space-y-3">
-        <div className="flex flex-wrap items-center justify-center gap-3 rounded-md bg-purple-100 p-4">
+        <div className="bg-creator-primary flex flex-wrap items-center justify-center gap-3 rounded-md bg-opacity-10 p-4">
           <div className="text-4xl md:text-5xl">{donationItem.icon}</div>
           <div className="text-xl font-bold text-gray-500">X</div>
           <div className="flex items-center gap-2">
@@ -94,7 +94,7 @@ const DonationForm: React.FC<DonationFormProps> = ({ creator }) => {
                 />
                 <label
                   htmlFor={`quantity${idx + 1}`}
-                  className="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-[1px] border-purple-300 bg-white font-bold hover:border-purple-400 peer-checked:bg-purple-800 peer-checked:text-white md:h-12 md:w-12"
+                  className="peer-checked:bg-creator-primary peer-checked:text-creator-100 hover:bg-creator-primary inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-white font-bold shadow transition-colors duration-200 ease-in-out hover:bg-opacity-10 md:h-12 md:w-12"
                 >
                   {donationOption}
                 </label>
@@ -108,7 +108,7 @@ const DonationForm: React.FC<DonationFormProps> = ({ creator }) => {
               min={1}
               max={50}
               value={donationFormData.quantity}
-              className="h-10 w-10 rounded-md border-[1px] border-purple-300 text-center md:h-12 md:w-12"
+              className="h-10 w-10 rounded-md text-center shadow md:h-12 md:w-12"
               placeholder="10"
               onChange={(e) =>
                 setDonationFormData((prevState) => ({
@@ -137,8 +137,8 @@ const DonationForm: React.FC<DonationFormProps> = ({ creator }) => {
           <textarea
             id="message"
             name="message"
-            className="w-full rounded-md bg-gray-100 px-4 py-3 text-slate-900 focus:border-slate-900 focus:bg-white"
-            placeholder={`Your message for ${creator.fullname}`}
+            className="block w-full rounded-md bg-gray-100 px-4 py-3 text-slate-900 focus:border-slate-900 focus:bg-white"
+            placeholder={`Add your message for ${creator.fullname}`}
             maxLength={DONATION_MESSAGE_MAX_LENGTH}
             value={donationFormData.message}
             onChange={(e) =>
@@ -157,7 +157,7 @@ const DonationForm: React.FC<DonationFormProps> = ({ creator }) => {
 
         <button
           type="submit"
-          className="btn btn-md w-full rounded-full bg-purple-800 text-base text-white outline-none hover:bg-purple-700"
+          className="btn btn-md bg-creator-primary text-creator-100 hover:bg-creator-primary w-full rounded-full text-base outline-none hover:bg-opacity-90"
           disabled={
             saveSupporterDonation.isPending || donationFormData.quantity === 0
           }

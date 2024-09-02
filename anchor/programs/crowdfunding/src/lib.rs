@@ -9,7 +9,7 @@ pub use constants::*;
 pub use instructions::*;
 pub use state::*;
 
-declare_id!("EWcK31xgYQpVUqQwt796Yv2DNuvnepQ9gmvdTxBRRCps");
+declare_id!("2egw9cMLW7bHpXyvM7UALUehkswxEVFVdYYp3PEpgC5m");
 
 #[program]
 pub mod crowdfunding {
@@ -44,6 +44,7 @@ pub mod crowdfunding {
         is_supporters_count_visible: bool,
         price_per_donation: u64,
         donation_item: String,
+        theme_color: String,
         thanks_message: String,
     ) -> Result<()> {
         instructions::update_creator::update_creator_page_settings(
@@ -51,6 +52,7 @@ pub mod crowdfunding {
             is_supporters_count_visible,
             price_per_donation,
             donation_item,
+            theme_color,
             thanks_message,
         )
     }

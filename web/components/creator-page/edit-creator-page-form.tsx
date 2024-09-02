@@ -2,26 +2,31 @@
 
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useRouter } from 'next/navigation';
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useState } from 'react';
 import {
   useCrowdfundingProgram,
   useGetCreatorByAddress,
 } from '../data-access/crowdfunding-data-access';
 import { z } from 'zod';
-import { IconEye } from '@tabler/icons-react';
+import { IconCheck, IconEye, IconPalette } from '@tabler/icons-react';
 import { lamportsToSol, solToLamports } from '../utils/conversion.util';
 import ThankYouModal from '../shared/modals/thank-you-modal';
-import { getDonationItems } from '../data-access/local-data-access';
+import {
+  getDonationItems,
+  getThemeColors,
+} from '../data-access/local-data-access';
 import {
   THANKS_MESSAGE_MAX_LENGTH,
   PRICE_PER_DONATION_MIN_VALUE,
   PRICE_PER_DONATION_MAX_VALUE,
 } from '../utils/constants';
+import { debounce } from '../utils/debounce.util';
 
 type CreatorFormData = {
   isSupportersCountVisible: boolean;
   pricePerDonation: number;
   donationItem: string;
+  themeColor: string;
   thanksMessage: string;
 };
 
@@ -34,6 +39,7 @@ const initialCreatorFormData: CreatorFormData = {
   isSupportersCountVisible: true,
   pricePerDonation: 0.1,
   donationItem: '',
+  themeColor: '#794BC4',
   thanksMessage: '',
 };
 
@@ -68,6 +74,7 @@ export default function EditCreatorPageForm() {
   const { updateCreatorPage } = useCrowdfundingProgram();
   const { data: creator } = useGetCreatorByAddress({ address: publicKey });
   const [showThankYouModal, setShowThankYouModal] = useState(false);
+  const [customThemeColor, setCustomThemeColor] = useState('#000000');
 
   const [formData, setFormData] = useState<CreatorFormData>(
     initialCreatorFormData,
@@ -80,14 +87,24 @@ export default function EditCreatorPageForm() {
     return null;
   }
 
+  console.log(creator);
+
   useEffect(() => {
     if (creator) {
       setFormData({
         isSupportersCountVisible: creator.isSupportersCountVisible,
         pricePerDonation: lamportsToSol(creator.pricePerDonation),
         donationItem: creator.donationItem,
+        themeColor: creator.themeColor,
         thanksMessage: creator.thanksMessage,
       });
+
+      const hasDefinedThemeColor = getThemeColors().find(
+        (c) => c.value === creator.themeColor,
+      );
+      if (!hasDefinedThemeColor) {
+        setCustomThemeColor(creator.themeColor);
+      }
     }
   }, [creator]);
 
@@ -128,6 +145,18 @@ export default function EditCreatorPageForm() {
 
   const thanksMessageRemainingChars =
     THANKS_MESSAGE_MAX_LENGTH - formData.thanksMessage.length;
+
+  // Create a debounced version of the setCustomThemeColor function
+  const debouncedSetCustomThemeColor = useCallback(
+    debounce((color: string) => {
+      setCustomThemeColor(color);
+      setFormData({
+        ...formData,
+        themeColor: color,
+      });
+    }, 300), // Adjust the debounce delay as needed
+    [],
+  );
 
   return (
     <>
@@ -207,6 +236,68 @@ export default function EditCreatorPageForm() {
                   {item.icon} {item.value}
                 </button>
               ))}
+            </div>
+          </div>
+          <div className="py-6">
+            <label className="font-bold">Theme color</label>
+            <p className="text-sm text-gray-500">
+              Select what theme color you would like to use for your creator
+              page
+            </p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {getThemeColors().map((item, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  style={{
+                    backgroundColor: item.value,
+                    outline:
+                      formData.themeColor === item.value
+                        ? `solid 2px ${item.value}`
+                        : 'none',
+                  }}
+                  className="btn btn-sm h-10 w-10 rounded-full text-white outline-offset-1"
+                  onClick={() => {
+                    setFormData({
+                      ...formData,
+                      themeColor: item.value,
+                    });
+                    setCustomThemeColor('#000000');
+                  }}
+                >
+                  {formData.themeColor === item.value && (
+                    <IconCheck strokeWidth={4} />
+                  )}
+                </button>
+              ))}
+              <div
+                className="btn btn-sm h-10 w-10 rounded-full bg-gray-400 text-white outline-offset-1"
+                style={{
+                  backgroundColor: customThemeColor,
+                  outline:
+                    formData.themeColor === customThemeColor
+                      ? `solid 2px ${customThemeColor}`
+                      : 'none',
+                }}
+              >
+                <label
+                  htmlFor="customColorPicker"
+                  className="inline-block"
+                  title="Choose custom color"
+                >
+                  <IconPalette />
+                </label>
+                <input
+                  type="color"
+                  id="customColorPicker"
+                  name="color-picker"
+                  value="#ff0000"
+                  className="absolute cursor-pointer opacity-0"
+                  onChange={(e) => {
+                    debouncedSetCustomThemeColor(e.target.value);
+                  }}
+                />
+              </div>
             </div>
           </div>
 

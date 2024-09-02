@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/crowdfunding.json`.
  */
 export type Crowdfunding = {
-  "address": "EWcK31xgYQpVUqQwt796Yv2DNuvnepQ9gmvdTxBRRCps",
+  "address": "2egw9cMLW7bHpXyvM7UALUehkswxEVFVdYYp3PEpgC5m",
   "metadata": {
     "name": "crowdfunding",
     "version": "0.1.0",
@@ -375,6 +375,10 @@ export type Crowdfunding = {
           "type": "string"
         },
         {
+          "name": "themeColor",
+          "type": "string"
+        },
+        {
           "name": "thanksMessage",
           "type": "string"
         }
@@ -550,12 +554,12 @@ export type Crowdfunding = {
     {
       "code": 6003,
       "name": "insufficientFundsAfterWithdraw",
-      "msg": "Withdrawal would reduce the account balance below the rent-exempt minimum."
+      "msg": "Withdrawal would reduce the account balance below the rent-exempt minimum"
     },
     {
       "code": 6004,
       "name": "invalidSigner",
-      "msg": "Signer does not have access to call this instruction."
+      "msg": "Signer does not have access to call this instruction"
     }
   ],
   "types": [
@@ -638,6 +642,10 @@ export type Crowdfunding = {
           },
           {
             "name": "donationItem",
+            "type": "string"
+          },
+          {
+            "name": "themeColor",
             "type": "string"
           },
           {

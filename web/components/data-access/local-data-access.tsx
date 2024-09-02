@@ -11,28 +11,28 @@ type ThemeColor = {
 
 const availableThemeColors: ThemeColor[] = [
   {
-    value: 'creator-theme-blue',
-    title: 'Blue',
+    value: '#794BC4',
+    title: 'Purple',
   },
   {
-    value: 'creator-theme-green',
-    title: 'Green',
-  },
-  {
-    value: 'creator-theme-yellow',
-    title: 'Yellow',
-  },
-  {
-    value: 'creator-theme-orange',
-    title: 'Orange',
-  },
-  {
-    value: 'creator-theme-red',
+    value: '#FF5F5F',
     title: 'Red',
   },
   {
-    value: 'creator-theme-purple',
-    title: 'Purple',
+    value: '#F45D22',
+    title: 'Orange',
+  },
+  {
+    value: '#FCBF47',
+    title: 'Yellow',
+  },
+  {
+    value: '#5CB85C',
+    title: 'Green',
+  },
+  {
+    value: '#00B9FE',
+    title: 'Blue',
   },
 ];
 

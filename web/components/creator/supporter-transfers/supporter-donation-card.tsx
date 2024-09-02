@@ -22,29 +22,27 @@ export const SupporterDonationCard: React.FC<SupporterDonationCardProps> = (
     quantity > 1 ? donationItem.plural : donationItem.value;
 
   return (
-    <div className="rounded-box bg-purple-200 p-4">
+    <div className="rounded-box bg-creator-primary text-creator-20 bg-opacity-20 p-4">
       <div className="flex justify-between">
-        <div>
-          <p>
-            {name ? (
-              <a
-                href={getExplorerUrl(`address/${supporter.toBase58()}`)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="link font-semibold no-underline hover:underline"
-              >
-                {name}
-              </a>
-            ) : (
-              <span className="font-semibold">Someone</span>
-            )}{' '}
-            bought you {quantity} {donationItemName} 🎉
-          </p>
-        </div>
+        <p>
+          {name ? (
+            <a
+              href={getExplorerUrl(`address/${supporter.toBase58()}`)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="link font-semibold no-underline hover:underline"
+            >
+              {name}
+            </a>
+          ) : (
+            <span className="font-semibold">Someone</span>
+          )}{' '}
+          bought you {quantity} {donationItemName} 🎉
+        </p>
       </div>
       {message && (
-        <div className="mt-2 rounded-md bg-purple-50 p-2">
-          <p className="text-slate-900">{message}</p>
+        <div className="bg-creator-primary mt-2 rounded-md bg-opacity-10 p-2">
+          <p>{message}</p>
         </div>
       )}
     </div>

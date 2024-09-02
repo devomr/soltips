@@ -24,6 +24,9 @@ pub struct Creator {
     #[max_len(10)]
     pub donation_item: String,
 
+    #[max_len(7)]
+    pub theme_color: String,
+
     #[max_len(250)]
     pub thanks_message: String,
 

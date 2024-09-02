@@ -207,6 +207,7 @@ describe('crowdfunding', () => {
       isSupportersCountVisible: false,
       pricePerDonation: new BN(0.2 * LAMPORTS_PER_SOL),
       donationItem: 'pizza',
+      themeColor: '#FCBF47',
       thanksMessage: 'thanks',
     };
     const transactionSignature = await program.methods
@@ -214,6 +215,7 @@ describe('crowdfunding', () => {
         pageSettings.isSupportersCountVisible,
         pageSettings.pricePerDonation,
         pageSettings.donationItem,
+        pageSettings.themeColor,
         pageSettings.thanksMessage,
       )
       .accounts({ ...accounts })
@@ -232,6 +234,7 @@ describe('crowdfunding', () => {
       creatorAccount.pricePerDonation.eq(pageSettings.pricePerDonation),
     ).toBe(true);
     expect(creatorAccount.donationItem).toBe(pageSettings.donationItem);
+    expect(creatorAccount.themeColor).toBe(pageSettings.themeColor);
     expect(creatorAccount.thanksMessage).toBe(pageSettings.thanksMessage);
   });
 
@@ -353,7 +356,7 @@ describe('crowdfunding', () => {
     const zeroBN = new BN(0);
 
     expect(campaignAccount.owner.equals(creatorWallet.publicKey)).toBe(true);
-    expect(campaignAccount.id).toBe(campaignsCountBefore);
+    expect(campaignAccount.id.toNumber()).toBe(campaignsCountBefore);
     expect(campaignAccount.name).toBe(name);
     expect(campaignAccount.description).toBe(description);
     expect(campaignAccount.targetAmount.eq(targetAmount)).toBe(true);

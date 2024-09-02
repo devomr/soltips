@@ -48,6 +48,7 @@ pub fn register_new_creator(
         is_supporters_count_visible: true,
         price_per_donation: DEFAULT_PRICE_PER_DONATION,
         donation_item: DEFAULT_DONATION_ITEM.to_string(),
+        theme_color: "#794BC4".to_owned(),
         thanks_message: "".to_owned(),
         supporters_count: 0,
         campaigns_count: 0,

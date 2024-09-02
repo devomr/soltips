@@ -1,5 +1,5 @@
 {
-  "address": "EWcK31xgYQpVUqQwt796Yv2DNuvnepQ9gmvdTxBRRCps",
+  "address": "2egw9cMLW7bHpXyvM7UALUehkswxEVFVdYYp3PEpgC5m",
   "metadata": {
     "name": "crowdfunding",
     "version": "0.1.0",
@@ -369,6 +369,10 @@
           "type": "string"
         },
         {
+          "name": "theme_color",
+          "type": "string"
+        },
+        {
           "name": "thanks_message",
           "type": "string"
         }
@@ -544,12 +548,12 @@
     {
       "code": 6003,
       "name": "InsufficientFundsAfterWithdraw",
-      "msg": "Withdrawal would reduce the account balance below the rent-exempt minimum."
+      "msg": "Withdrawal would reduce the account balance below the rent-exempt minimum"
     },
     {
       "code": 6004,
       "name": "InvalidSigner",
-      "msg": "Signer does not have access to call this instruction."
+      "msg": "Signer does not have access to call this instruction"
     }
   ],
   "types": [
@@ -632,6 +636,10 @@
           },
           {
             "name": "donation_item",
+            "type": "string"
+          },
+          {
+            "name": "theme_color",
             "type": "string"
           },
           {

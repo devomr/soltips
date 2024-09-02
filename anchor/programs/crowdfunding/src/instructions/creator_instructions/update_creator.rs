@@ -47,6 +47,7 @@ pub fn update_creator_page_settings(
     is_supporters_count_visible: bool,
     price_per_donation: u64,
     donation_item: String,
+    theme_color: String,
     thanks_message: String,
 ) -> Result<()> {
     // Check if the creator account owner is the signer
@@ -60,6 +61,7 @@ pub fn update_creator_page_settings(
     creator_account.is_supporters_count_visible = is_supporters_count_visible;
     creator_account.price_per_donation = price_per_donation;
     creator_account.donation_item = donation_item;
+    creator_account.theme_color = theme_color;
     creator_account.thanks_message = thanks_message;
 
     Ok(())

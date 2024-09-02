@@ -11,14 +11,29 @@ import LoadingSpinner from '../shared/loading';
 import NoData from '../shared/no-data';
 import { ShareButton } from '../shared/buttons/share-button';
 import { SupporterDonations } from './supporter-transfers/supporter-donations';
+import { getAccessibleTextColor, getRGBColor } from '../utils/theme.util';
+
+function getCreatorTheme(color: string) {
+  const primaryColor = getRGBColor(color, 'creator-theme-color');
+  const textColor100 = getRGBColor(
+    getAccessibleTextColor(color, 1),
+    'creator-theme-text-color-100',
+  );
+  const textColor20 = getRGBColor(
+    getAccessibleTextColor(color, 0.2),
+    'creator-theme-text-color-20',
+  );
+
+  return {
+    ...primaryColor,
+    ...textColor100,
+    ...textColor20,
+  } as React.CSSProperties;
+}
 
 export default function CreatorFeature() {
   const params = useParams<{ username: string }>();
-  const {
-    data: creator,
-    isLoading,
-    isFetched,
-  } = useGetCreatorByUsername({
+  const { data: creator, isLoading } = useGetCreatorByUsername({
     username: params.username,
   });
 
@@ -44,7 +59,7 @@ export default function CreatorFeature() {
   }
 
   return (
-    <>
+    <div style={getCreatorTheme(creator.themeColor)}>
       <CreatorPageHeader creator={creator} />
       <div className="mx-auto max-w-screen-xl p-4">
         <div className="grid grid-cols-1 gap-4 pt-4 lg:grid-cols-3">
@@ -67,7 +82,7 @@ export default function CreatorFeature() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
@@ -77,7 +92,11 @@ function CreatorPageHeader({ creator }: { creator: Creator }) {
       <div className="mx-auto max-w-screen-xl p-4">
         <div className="flex flex-col items-center md:flex-row md:justify-between">
           <div className="flex flex-col items-center gap-4 md:flex-row">
-            <UserAvatar name={creator.fullname} imageUrl={creator.imageUrl} />
+            <UserAvatar
+              name={creator.fullname}
+              imageUrl={creator.imageUrl}
+              customTheme={true}
+            />
             <div className="flex flex-col items-center md:items-start">
               <h1 className="text-2xl font-semibold">{creator.fullname}</h1>
               {creator.isSupportersCountVisible && (
