@@ -728,9 +728,34 @@
   ],
   "constants": [
     {
+      "name": "CAMPAIGN_TAG",
+      "type": "bytes",
+      "value": "[99, 97, 109, 112, 97, 105, 103, 110]"
+    },
+    {
+      "name": "CREATOR_TAG",
+      "type": "bytes",
+      "value": "[99, 114, 101, 97, 116, 111, 114]"
+    },
+    {
       "name": "SEED",
       "type": "string",
       "value": "\"anchor\""
+    },
+    {
+      "name": "SUPPORTER_DONATION_FEE_PERCENTAGE",
+      "type": "u64",
+      "value": "1"
+    },
+    {
+      "name": "SUPPORTER_DONATION_TAG",
+      "type": "bytes",
+      "value": "[115, 117, 112, 112, 111, 114, 116, 101, 114, 68, 111, 110, 97, 116, 105, 111, 110]"
+    },
+    {
+      "name": "USERNAME_TAG",
+      "type": "bytes",
+      "value": "[117, 115, 101, 114, 110, 97, 109, 101]"
     }
   ]
 }

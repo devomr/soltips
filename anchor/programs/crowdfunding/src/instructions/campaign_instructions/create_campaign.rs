@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-use crate::{Campaign, Creator, ANCHOR_DISCRIMINATOR};
+use crate::{Campaign, Creator, ANCHOR_DISCRIMINATOR, CAMPAIGN_TAG};
 
 #[derive(Accounts)]
 pub struct CreateCampaign<'info> {
@@ -14,7 +14,7 @@ pub struct CreateCampaign<'info> {
         init,
         payer = signer,
         space = ANCHOR_DISCRIMINATOR + Campaign::INIT_SPACE,
-        seeds = [b"campaign", creator_account.key().as_ref(), &creator_account.campaigns_count.to_le_bytes().as_ref()],
+        seeds = [CAMPAIGN_TAG, creator_account.key().as_ref(), &creator_account.campaigns_count.to_le_bytes().as_ref()],
         bump
     )]
     pub campaign_account: Account<'info, Campaign>,

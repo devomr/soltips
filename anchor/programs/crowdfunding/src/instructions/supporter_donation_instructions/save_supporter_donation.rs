@@ -2,7 +2,10 @@ use anchor_lang::prelude::*;
 use anchor_lang::solana_program::{program::invoke, system_instruction};
 
 use crate::error::ErrorCode;
-use crate::{Creator, SupporterDonation, ANCHOR_DISCRIMINATOR, SUPPORTER_DONATION_FEE_PERCENTAGE};
+use crate::{
+    Creator, SupporterDonation, ANCHOR_DISCRIMINATOR, SUPPORTER_DONATION_FEE_PERCENTAGE,
+    SUPPORTER_DONATION_TAG,
+};
 
 #[derive(Accounts)]
 pub struct SendSupporterDonation<'info> {
@@ -16,7 +19,7 @@ pub struct SendSupporterDonation<'info> {
         init,
         payer = signer,
         space = ANCHOR_DISCRIMINATOR + SupporterDonation::INIT_SPACE,
-        seeds = [b"supporterDonation", creator_account.key().as_ref(), &creator_account.supporters_count.to_le_bytes().as_ref()],
+        seeds = [SUPPORTER_DONATION_TAG, creator_account.key().as_ref(), &creator_account.supporters_count.to_le_bytes().as_ref()],
         bump
     )]
     pub supporter_donation_account: Account<'info, SupporterDonation>,

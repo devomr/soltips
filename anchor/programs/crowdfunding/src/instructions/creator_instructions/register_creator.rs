@@ -1,6 +1,6 @@
 use anchor_lang::{prelude::*, solana_program::native_token::LAMPORTS_PER_SOL};
 
-use crate::{Creator, CreatorUsername, ANCHOR_DISCRIMINATOR};
+use crate::{Creator, CreatorUsername, ANCHOR_DISCRIMINATOR, CREATOR_TAG, USERNAME_TAG};
 
 #[derive(Accounts)]
 #[instruction(username: String)]
@@ -12,7 +12,7 @@ pub struct RegisterCreator<'info> {
         init,
         payer = signer,
         space = ANCHOR_DISCRIMINATOR + Creator::INIT_SPACE,
-        seeds = [b"creator", signer.key().as_ref()],
+        seeds = [CREATOR_TAG, signer.key().as_ref()],
         bump
     )]
     pub creator_account: Account<'info, Creator>,
@@ -21,7 +21,7 @@ pub struct RegisterCreator<'info> {
         init,
         payer = signer,
         space = ANCHOR_DISCRIMINATOR + CreatorUsername::INIT_SPACE,
-        seeds = [b"username", username.as_bytes()],
+        seeds = [USERNAME_TAG, username.as_bytes()],
         bump,
     )]
     pub creator_username_account: Account<'info, CreatorUsername>,
@@ -35,9 +35,9 @@ pub fn register_new_creator(
     fullname: String,
     bio: String,
 ) -> Result<()> {
-    // equivalent of 0.1 SOL
-    const DEFAULT_PRICE_PER_DONATION: u64 = (0.1 * LAMPORTS_PER_SOL as f64) as u64;
+    const DEFAULT_PRICE_PER_DONATION: u64 = (0.1 * LAMPORTS_PER_SOL as f64) as u64; // equivalent of 0.1 SOL
     const DEFAULT_DONATION_ITEM: &str = "coffee";
+    const DEFAULT_THEME_COLOR: &str = "#794BC4";
 
     // Set the creator account details
     context.accounts.creator_account.set_inner(Creator {
@@ -48,7 +48,7 @@ pub fn register_new_creator(
         is_supporters_count_visible: true,
         price_per_donation: DEFAULT_PRICE_PER_DONATION,
         donation_item: DEFAULT_DONATION_ITEM.to_string(),
-        theme_color: "#794BC4".to_owned(),
+        theme_color: DEFAULT_THEME_COLOR.to_string(),
         thanks_message: "".to_owned(),
         supporters_count: 0,
         campaigns_count: 0,

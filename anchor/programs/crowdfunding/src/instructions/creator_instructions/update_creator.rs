@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 
 use crate::error::ErrorCode;
-use crate::{Creator, ANCHOR_DISCRIMINATOR};
+use crate::{Creator, ANCHOR_DISCRIMINATOR, CREATOR_TAG};
 
 #[derive(Accounts)]
 pub struct UpdateCreator<'info> {
@@ -10,7 +10,7 @@ pub struct UpdateCreator<'info> {
 
     #[account(
         mut,
-        seeds = [b"creator", signer.key().as_ref()],
+        seeds = [CREATOR_TAG, signer.key().as_ref()],
         realloc = ANCHOR_DISCRIMINATOR + Creator::INIT_SPACE,
         realloc::payer = signer,
         realloc::zero = true,

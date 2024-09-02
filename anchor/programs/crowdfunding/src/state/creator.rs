@@ -14,7 +14,7 @@ pub struct Creator {
     #[max_len(250)]
     pub bio: String,
 
-    #[max_len(250)]
+    #[max_len(2048)]
     pub image_url: String,
 
     pub is_supporters_count_visible: bool,

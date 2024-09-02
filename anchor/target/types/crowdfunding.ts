@@ -734,9 +734,34 @@ export type Crowdfunding = {
   ],
   "constants": [
     {
+      "name": "campaignTag",
+      "type": "bytes",
+      "value": "[99, 97, 109, 112, 97, 105, 103, 110]"
+    },
+    {
+      "name": "creatorTag",
+      "type": "bytes",
+      "value": "[99, 114, 101, 97, 116, 111, 114]"
+    },
+    {
       "name": "seed",
       "type": "string",
       "value": "\"anchor\""
+    },
+    {
+      "name": "supporterDonationFeePercentage",
+      "type": "u64",
+      "value": "1"
+    },
+    {
+      "name": "supporterDonationTag",
+      "type": "bytes",
+      "value": "[115, 117, 112, 112, 111, 114, 116, 101, 114, 68, 111, 110, 97, 116, 105, 111, 110]"
+    },
+    {
+      "name": "usernameTag",
+      "type": "bytes",
+      "value": "[117, 115, 101, 114, 110, 97, 109, 101]"
     }
   ]
 };
