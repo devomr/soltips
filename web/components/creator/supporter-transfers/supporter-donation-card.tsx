@@ -37,7 +37,7 @@ export const SupporterDonationCard: React.FC<SupporterDonationCardProps> = (
           ) : (
             <span className="font-semibold">Someone</span>
           )}{' '}
-          bought you {quantity} {donationItemName} 🎉
+          bought {quantity} {donationItemName} 🎉
         </p>
       </div>
       {message && (

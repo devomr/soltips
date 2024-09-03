@@ -61,8 +61,6 @@ const DonationForm: React.FC<DonationFormProps> = ({ creator }) => {
       creator,
     });
 
-    // clear the form state
-    setDonationFormData(initialDonationFormData);
     setShowThankYouModal(true);
   };
 
@@ -168,14 +166,23 @@ const DonationForm: React.FC<DonationFormProps> = ({ creator }) => {
           Tip {donationFormData.quantity * coffeePrice} SOL
         </button>
       </form>
-      <ThankYouModal
-        hide={() => setShowThankYouModal(false)}
-        show={showThankYouModal}
-        creator={creator}
-        quantity={donationFormData.quantity}
-        donationItem={donationItem.value}
-        thanksMessage={creator.thanksMessage}
-      />
+      {showThankYouModal && (
+        <ThankYouModal
+          hide={() => {
+            setDonationFormData(initialDonationFormData);
+            setShowThankYouModal(false);
+          }}
+          show={showThankYouModal}
+          creator={creator}
+          quantity={donationFormData.quantity}
+          donationItem={
+            donationFormData.quantity > 1
+              ? `${donationItem.plural}`
+              : donationItem.value
+          }
+          thanksMessage={creator.thanksMessage}
+        />
+      )}
     </>
   );
 };

@@ -241,9 +241,6 @@ export function useCrowdfundingProgram() {
       console.log(signature);
       transactionToast(signature);
 
-      console.log(cluster);
-      console.log(input.creator.username);
-
       return Promise.all([
         client.invalidateQueries({
           queryKey: [
@@ -261,7 +258,7 @@ export function useCrowdfundingProgram() {
         client.invalidateQueries({
           queryKey: [
             'crowdfunding',
-            'list-supporter-transfers',
+            'list-supporter-donations',
             { cluster, username: input.creator.username },
           ],
         }),
