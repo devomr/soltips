@@ -54,6 +54,7 @@ pub fn register_new_creator(
         campaigns_count: 0,
         supporter_donations_amount: 0,
         owner: context.accounts.signer.key(),
+        social_links: Vec::new(),
         bump: context.bumps.creator_account,
     });
 

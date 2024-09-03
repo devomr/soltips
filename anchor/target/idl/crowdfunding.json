@@ -437,6 +437,12 @@
         {
           "name": "image_url",
           "type": "string"
+        },
+        {
+          "name": "social_links",
+          "type": {
+            "vec": "string"
+          }
         }
       ]
     },
@@ -657,6 +663,12 @@
           {
             "name": "supporter_donations_amount",
             "type": "u64"
+          },
+          {
+            "name": "social_links",
+            "type": {
+              "vec": "string"
+            }
           },
           {
             "name": "bump",

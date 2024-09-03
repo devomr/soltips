@@ -1,3 +1,18 @@
+import {
+  IconBrandDiscord,
+  IconBrandFacebook,
+  IconBrandGithub,
+  IconBrandInstagram,
+  IconBrandReddit,
+  IconBrandTiktok,
+  IconBrandTwitch,
+  IconBrandX,
+  IconBrandYoutube,
+  IconLink,
+  IconProps,
+} from '@tabler/icons-react';
+import { ReactElement } from 'react';
+
 type DonationItem = {
   icon: string;
   value: string;

@@ -35,5 +35,8 @@ pub struct Creator {
 
     pub supporter_donations_amount: u64,
 
+    #[max_len(5, 250)]
+    pub social_links: Vec<String>,
+
     pub bump: u8,
 }

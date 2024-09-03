@@ -12,6 +12,7 @@ import NoData from '../shared/no-data';
 import { ShareButton } from '../shared/buttons/share-button';
 import { SupporterDonations } from './supporter-transfers/supporter-donations';
 import { getAccessibleTextColor, getRGBColor } from '../utils/theme.util';
+import { SocialLinks } from './social-links';
 
 function getCreatorTheme(color: string) {
   const primaryColor = getRGBColor(color, 'creator-theme-color');
@@ -67,6 +68,11 @@ export default function CreatorFeature() {
             <div className="rounded-box mb-4 w-full bg-white p-4">
               <h2 className="mb-2 text-lg font-semibold">About me</h2>
               <p>{creator.bio}</p>
+              {creator.socialLinks.length > 0 && (
+                <div className="mt-4">
+                  <SocialLinks links={creator.socialLinks} />
+                </div>
+              )}
             </div>
             <section className="rounded-box bg-white p-4">
               <h2 className="mb-4 text-lg font-semibold text-slate-900">

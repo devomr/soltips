@@ -26,6 +26,7 @@ pub fn update_creator_profile_data(
     fullname: String,
     bio: String,
     image_url: String,
+    social_links: Vec<String>,
 ) -> Result<()> {
     // Check if the creator account owner is the signer
     require!(
@@ -38,6 +39,7 @@ pub fn update_creator_profile_data(
     creator_account.fullname = fullname;
     creator_account.bio = bio;
     creator_account.image_url = image_url;
+    creator_account.social_links = social_links;
 
     Ok(())
 }

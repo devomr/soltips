@@ -174,11 +174,14 @@ describe('crowdfunding', () => {
     creatorObject.bio = 'new bio';
     creatorObject.imageUrl = 'https://example.com/image.jpg';
 
+    const socialLinks = ['https://youtube.com', 'https://mywebsite.com'];
+
     const transactionSignature = await program.methods
       .updateCreatorProfile(
         creatorObject.fullname,
         creatorObject.bio,
         creatorObject.imageUrl,
+        socialLinks,
       )
       .accounts({ ...accounts })
       .signers([creatorWallet])
@@ -192,6 +195,7 @@ describe('crowdfunding', () => {
     expect(creatorAccount.fullname).toBe(creatorObject.fullname);
     expect(creatorAccount.bio).toBe(creatorObject.bio);
     expect(creatorAccount.imageUrl).toBe(creatorObject.imageUrl);
+    expect(creatorAccount.socialLinks).toEqual(socialLinks);
   });
 
   test('Update creator page settings', async () => {

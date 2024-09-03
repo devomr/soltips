@@ -35,8 +35,15 @@ pub mod crowdfunding {
         fullname: String,
         bio: String,
         image_url: String,
+        social_links: Vec<String>,
     ) -> Result<()> {
-        instructions::update_creator::update_creator_profile_data(context, fullname, bio, image_url)
+        instructions::update_creator::update_creator_profile_data(
+            context,
+            fullname,
+            bio,
+            image_url,
+            social_links,
+        )
     }
 
     pub fn update_creator_page(

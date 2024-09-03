@@ -63,6 +63,7 @@ interface UpdateCreatorProfileInput {
   fullname: string;
   bio: string;
   imageUrl: string;
+  socialLinks: string[];
 }
 
 interface UpdateCreatorPageInput {
@@ -154,7 +155,7 @@ export function useCrowdfundingProgram() {
     UpdateCreatorProfileInput
   >({
     mutationKey: ['crowdfunding', 'update-creator-profile', { cluster }],
-    mutationFn: async ({ fullname, bio, imageUrl, owner }) => {
+    mutationFn: async ({ fullname, bio, imageUrl, socialLinks, owner }) => {
       const creatorPda = getCreatorPda(owner);
 
       const accounts = {
@@ -162,7 +163,7 @@ export function useCrowdfundingProgram() {
       };
 
       return program.methods
-        .updateCreatorProfile(fullname, bio, imageUrl)
+        .updateCreatorProfile(fullname, bio, imageUrl, socialLinks)
         .accounts({ ...accounts })
         .rpc();
     },

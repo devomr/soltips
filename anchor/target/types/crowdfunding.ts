@@ -443,6 +443,12 @@ export type Crowdfunding = {
         {
           "name": "imageUrl",
           "type": "string"
+        },
+        {
+          "name": "socialLinks",
+          "type": {
+            "vec": "string"
+          }
         }
       ]
     },
@@ -663,6 +669,12 @@ export type Crowdfunding = {
           {
             "name": "supporterDonationsAmount",
             "type": "u64"
+          },
+          {
+            "name": "socialLinks",
+            "type": {
+              "vec": "string"
+            }
           },
           {
             "name": "bump",
