@@ -206,7 +206,7 @@ export default function EditProfileForm() {
             name="fullname"
             value={profileFormData.fullname}
             placeholder="John Smith"
-            className="input mt-1 w-full border-2 bg-gray-100 focus:border-slate-900 focus:bg-white focus:outline-none"
+            className="input mt-2 w-full border-2 bg-gray-100 focus:border-slate-900 focus:bg-white focus:outline-none"
             onChange={handleChange}
             required
           />
@@ -221,7 +221,7 @@ export default function EditProfileForm() {
           <textarea
             id="bio"
             name="bio"
-            className="textarea textarea-md mt-1 w-full border-2 bg-gray-100 text-base focus:border-slate-900 focus:bg-white focus:outline-none"
+            className="textarea textarea-md mt-2 w-full border-2 bg-gray-100 text-base focus:border-slate-900 focus:bg-white focus:outline-none"
             placeholder="Blockchain Developer and coffee lover"
             value={profileFormData.bio}
             onChange={handleChange}
@@ -234,7 +234,7 @@ export default function EditProfileForm() {
             <button
               type="button"
               onClick={handleAddSocialLink}
-              className="btn btn-sm mt-2 rounded-full"
+              className="btn btn-sm rounded-full"
               disabled={profileFormData.socialLinks.length >= 5}
             >
               <IconPlus />
@@ -242,7 +242,7 @@ export default function EditProfileForm() {
             </button>
           </div>
 
-          <div className="mt-1 space-y-2">
+          <div className="mt-2 space-y-2">
             {profileFormData.socialLinks.map((link, index) => (
               <SocialLinkInput
                 key={index}
