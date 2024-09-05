@@ -270,22 +270,20 @@ export default function EditCreatorPageForm() {
                   )}
                 </button>
               ))}
-              <div
-                className="btn btn-sm h-10 w-10 rounded-full bg-gray-400 text-white outline-offset-1"
-                style={{
-                  backgroundColor: customThemeColor,
-                  outline:
-                    formData.themeColor === customThemeColor
-                      ? `solid 2px ${customThemeColor}`
-                      : 'none',
-                }}
-              >
+              <div className="relative">
                 <label
                   htmlFor="customColorPicker"
-                  className="inline-block"
+                  className="btn btn-sm btn-circle h-10 w-10 rounded-full bg-gray-400 text-white outline-offset-1"
                   title="Choose custom color"
+                  style={{
+                    backgroundColor: customThemeColor,
+                    outline:
+                      formData.themeColor === customThemeColor
+                        ? `solid 2px ${customThemeColor}`
+                        : 'none',
+                  }}
                 >
-                  <IconPalette />
+                  <IconPalette size={18} />
                 </label>
                 <input
                   type="color"
