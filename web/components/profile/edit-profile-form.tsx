@@ -252,6 +252,11 @@ export default function EditProfileForm() {
                 onRemove={handleRemoveSocialLink}
               />
             ))}
+            {profileFormData.socialLinks.length === 0 && (
+              <p className="text-sm text-gray-500">
+                You have no social links added yet, but you can add up to 5.
+              </p>
+            )}
           </div>
           {errors.socialLinks && (
             <p className="text-sm text-red-600">{errors.socialLinks}</p>
