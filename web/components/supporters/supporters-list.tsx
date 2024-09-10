@@ -1,9 +1,9 @@
 import { useSupporterDonations } from '@/components/data-access/crowdfunding-data-access';
-import LoadingSpinner from '@/components/shared/loading';
 import NoData from '@/components/shared/no-data';
 import { useCluster } from '../cluster/cluster-data-access';
 import RelativeTime from '../shared/relative-time';
 import { lamportsToSol } from '../utils/conversion.util';
+import { LoadingSpinner } from '../shared/loading';
 
 type SupportersListProps = {
   username: string;
@@ -15,10 +15,9 @@ export const SupportersList: React.FC<SupportersListProps> = ({ username }) => {
 
   if (isLoading) {
     return (
-      <LoadingSpinner
-        className="my-4"
-        message="Loading the list of supporters..."
-      />
+      <LoadingSpinner className="my-4">
+        Loading the list of supporters...
+      </LoadingSpinner>
     );
   }
 
@@ -54,7 +53,7 @@ export const SupportersList: React.FC<SupportersListProps> = ({ username }) => {
                       )}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="link no-underline hover:underline font-semibold"
+                      className="link font-semibold no-underline hover:underline"
                     >
                       {supporterDonation.name}
                     </a>

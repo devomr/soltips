@@ -1,21 +1,20 @@
 import { IconLoader2 } from '@tabler/icons-react';
+import { ReactNode } from 'react';
 
 type LoadingSpinnerProps = {
-  message?: string;
   className?: string;
+  children?: ReactNode;
 };
 
-const LoadingSpinner = ({ message, className }: LoadingSpinnerProps) => {
+export function LoadingSpinner({ className, children }: LoadingSpinnerProps) {
   return (
     <div
-      className={`flex flex-col items-center justify-center text-slate-800 ${className}`}
+      className={`flex items-center justify-center gap-2 rounded-md p-4 text-slate-900 ${className}`}
     >
       <div className="animate-spin">
-        <IconLoader2 size={48} />
+        <IconLoader2 size={36} />
       </div>
-      {message && <p className="mt-4 text-lg">{message}</p>}
+      <p>{children}</p>
     </div>
   );
-};
-
-export default LoadingSpinner;
+}

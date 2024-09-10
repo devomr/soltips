@@ -1,5 +1,5 @@
-import CampaignsFeature from '@/components/campaigns/campaigns-feature';
+import ManageCampaignsFeature from '@/components/campaigns/manage-campaigns-feature';
 
 export default function Page() {
-  return <CampaignsFeature />;
+  return <ManageCampaignsFeature />;
 }

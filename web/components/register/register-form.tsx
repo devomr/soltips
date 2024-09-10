@@ -174,7 +174,7 @@ export default function RegisterForm() {
         <textarea
           id="bio"
           name="bio"
-          className="textarea textarea-md mt-1 w-full border-2 bg-gray-100 text-base focus:border-slate-900 focus:bg-white focus:outline-none"
+          className="textarea textarea-md mt-1 block w-full border-2 bg-gray-100 text-base focus:border-slate-900 focus:bg-white focus:outline-none"
           placeholder="web development tutorials on YouTube"
           maxLength={250}
           value={registerFormData.bio}

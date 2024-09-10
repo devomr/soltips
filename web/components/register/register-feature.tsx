@@ -24,8 +24,8 @@ export default function RegisterFeature() {
         Start Your Page
       </h1>
       <p className="mb-8 text-center text-lg text-gray-500">
-        Unlock powerful features to help you monetize your content and get paid
-        in crypto effortlessly 💸
+        Unlock powerful features that help you monetize your content and get
+        paid in crypto effortlessly 💸
       </p>
       <RegisterForm />
     </div>

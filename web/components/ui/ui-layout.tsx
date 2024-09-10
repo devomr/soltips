@@ -7,6 +7,11 @@ import { ClusterChecker, ExplorerLink } from '../cluster/cluster-ui';
 import toast, { Toaster } from 'react-hot-toast';
 import { Navbar } from '../navbar/navbar';
 
+type ModalButtonStyle = {
+  creatorTheme: boolean;
+  block: boolean;
+};
+
 export function UiLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-full flex-col bg-gray-100">
@@ -38,6 +43,8 @@ export function AppModal({
   submit,
   submitDisabled,
   submitLabel,
+  submitStyle,
+  closeVisible,
 }: {
   children: ReactNode;
   title: string;
@@ -46,6 +53,8 @@ export function AppModal({
   submit?: () => void;
   submitDisabled?: boolean;
   submitLabel?: string;
+  submitStyle?: ModalButtonStyle;
+  closeVisible?: boolean;
 }) {
   const dialogRef = useRef<HTMLDialogElement | null>(null);
 
@@ -73,11 +82,15 @@ export function AppModal({
     };
   }, [hide]); // Add hide to the dependency array
 
+  const submitButtonClass = submitStyle?.creatorTheme
+    ? 'bg-creator-primary text-creator-100 hover:bg-creator-primary hover:bg-opacity-90'
+    : 'bg-purple-800 text-white';
+
   return (
     <dialog className="modal" ref={dialogRef}>
       <div className="modal-box">
         <form method="dialog" onSubmit={hide}>
-          <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+          <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 outline-none">
             ✕
           </button>
         </form>
@@ -88,20 +101,24 @@ export function AppModal({
         </div>
 
         <div className="modal-action">
-          <div className="join space-x-2">
-            {submit ? (
-              <button
-                className="btn btn-xs lg:btn-md btn-primary"
-                onClick={submit}
-                disabled={submitDisabled}
-              >
-                {submitLabel || 'Save'}
-              </button>
-            ) : null}
-            <button onClick={hide} className="btn" type="button">
+          {submit ? (
+            <button
+              className={`btn btn-md rounded-full ${submitStyle?.block ? 'flex-1' : ''} ${submitButtonClass}`}
+              onClick={submit}
+              disabled={submitDisabled}
+            >
+              {submitLabel || 'Save'}
+            </button>
+          ) : null}
+          {closeVisible ? (
+            <button
+              onClick={hide}
+              className="btn btn-md rounded-full"
+              type="button"
+            >
               Close
             </button>
-          </div>
+          ) : null}
         </div>
       </div>
       <form method="dialog" className="modal-backdrop" onSubmit={hide}>

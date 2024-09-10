@@ -1,6 +1,35 @@
+import { useSupporterDonations } from '@/components/data-access/crowdfunding-data-access';
+import { LoadingSpinner } from '@/components/shared/loading';
+import { PublicKey } from '@solana/web3.js';
 import { useCluster } from '@/components/cluster/cluster-data-access';
 import { getDonationItem } from '@/components/data-access/local-data-access';
-import { PublicKey } from '@solana/web3.js';
+import { Alert } from '@/components/shared/alert';
+
+export function SupporterDonations({ username }: { username: string }) {
+  const { data, isLoading } = useSupporterDonations({ username: username });
+
+  if (isLoading) {
+    return <LoadingSpinner>Loading the recent supporters...</LoadingSpinner>;
+  }
+
+  if (!data || data.length === 0) {
+    return (
+      <Alert>
+        Your favorite creator does not have any supporters yet, but you can be
+        the first one! 😀
+      </Alert>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {data &&
+        data.map((supporterDonation, index) => (
+          <SupporterDonationCard key={index} props={{ ...supporterDonation }} />
+        ))}
+    </div>
+  );
+}
 
 type SupporterDonationCardProps = {
   supporter: PublicKey;
@@ -11,9 +40,11 @@ type SupporterDonationCardProps = {
   item: string;
 };
 
-export const SupporterDonationCard: React.FC<SupporterDonationCardProps> = (
-  props: SupporterDonationCardProps,
-) => {
+export function SupporterDonationCard({
+  props,
+}: {
+  props: SupporterDonationCardProps;
+}) {
   const { getExplorerUrl } = useCluster();
   const { supporter, name, message, item, quantity } = props;
 
@@ -47,4 +78,4 @@ export const SupporterDonationCard: React.FC<SupporterDonationCardProps> = (
       )}
     </div>
   );
-};
+}

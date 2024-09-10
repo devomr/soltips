@@ -13,11 +13,6 @@ import {
 } from '@tabler/icons-react';
 import { ReactElement } from 'react';
 
-interface SocialIconProps {
-  url: string;
-  size?: number;
-}
-
 const domainIconMap: { [key: string]: (size: number) => ReactElement } = {
   'youtube.com': (size: number) => <IconBrandYoutube size={size} />,
   'facebook.com': (size: number) => <IconBrandFacebook size={size} />,
@@ -31,7 +26,7 @@ const domainIconMap: { [key: string]: (size: number) => ReactElement } = {
   'github.com': (size: number) => <IconBrandGithub size={size} />,
 };
 
-export const SocialIcon: React.FC<SocialIconProps> = ({ url, size = 20 }) => {
+export function SocialIcon({ url, size = 20 }: { url: string; size?: number }) {
   const domain = extractDomain(url);
 
   const renderIcon = domainIconMap[domain];
@@ -41,4 +36,4 @@ export const SocialIcon: React.FC<SocialIconProps> = ({ url, size = 20 }) => {
   }
 
   return renderIcon(size);
-};
+}

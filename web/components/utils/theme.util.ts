@@ -1,3 +1,21 @@
+export function getCreatorTheme(color: string) {
+  const primaryColor = getRGBColor(color, 'creator-theme-color');
+  const textColor100 = getRGBColor(
+    getAccessibleTextColor(color, 1),
+    'creator-theme-text-color-100',
+  );
+  const textColor20 = getRGBColor(
+    getAccessibleTextColor(color, 0.2),
+    'creator-theme-text-color-20',
+  );
+
+  return {
+    ...primaryColor,
+    ...textColor100,
+    ...textColor20,
+  } as React.CSSProperties;
+}
+
 function hexToRgb(hex: string): [number, number, number] {
   let color = hex.replace(/^#/, '');
 

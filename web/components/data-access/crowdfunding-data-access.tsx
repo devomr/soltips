@@ -19,6 +19,7 @@ export type Creator = {
   fullname: string;
   bio: string;
   imageUrl: string;
+  socialLinks: string[];
   isSupportersCountVisible: boolean;
   pricePerDonation: BN;
   donationItem: string;
@@ -518,6 +519,38 @@ export function useSupporterDonations({ username }: { username: string }) {
       return results;
     },
     enabled: !!usernameRecord,
+  });
+}
+
+export function useCampaign({
+  address,
+  id,
+}: {
+  address: PublicKey;
+  id: string | null;
+}) {
+  const { cluster } = useCluster();
+  const { program } = useCrowdfundingProgram();
+
+  return useQuery({
+    queryKey: ['crowdfunding', 'get-campaign', { cluster, address, id }],
+    queryFn: async () => {
+      if (!address || !id) {
+        return null;
+      }
+
+      const creatorPda = getCreatorPda(address);
+      const creator = await program.account.creator.fetchNullable(creatorPda);
+
+      if (!creator) {
+        return null;
+      }
+      const campaignPda = getCampaignPda(creatorPda, new BN(id));
+      const campaign =
+        await program.account.campaign.fetchNullable(campaignPda);
+
+      return campaign;
+    },
   });
 }
 

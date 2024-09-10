@@ -13,10 +13,6 @@ import { DONATION_MESSAGE_MAX_LENGTH } from '../utils/constants';
 
 const donationOptions = [1, 3, 5];
 
-type DonationFormProps = {
-  creator: Creator;
-};
-
 type DonationFormData = {
   quantity: number;
   name: string;
@@ -29,7 +25,7 @@ const initialDonationFormData: DonationFormData = {
   message: '',
 };
 
-const DonationForm: React.FC<DonationFormProps> = ({ creator }) => {
+export function DonationForm({ creator }: { creator: Creator }) {
   const { publicKey } = useWallet();
   const { saveSupporterDonation } = useCrowdfundingProgram();
   const [donationFormData, setDonationFormData] = useState<DonationFormData>(
@@ -185,6 +181,4 @@ const DonationForm: React.FC<DonationFormProps> = ({ creator }) => {
       )}
     </>
   );
-};
-
-export default DonationForm;
+}
