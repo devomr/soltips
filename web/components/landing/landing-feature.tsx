@@ -1,7 +1,7 @@
 'use client';
 
 import { useWallet } from '@solana/wallet-adapter-react';
-import { useRouter } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import { useEffect } from 'react';
 import { useGetCreatorByAddress } from '../data-access/crowdfunding-data-access';
 import { FeatureCard } from './feature-card';
@@ -41,14 +41,13 @@ const featureCards = [
 ];
 
 export default function LandingFeature() {
-  const router = useRouter();
   const { publicKey } = useWallet();
   const { data: creator } = useGetCreatorByAddress({ address: publicKey });
 
   useEffect(() => {
     if (creator) {
       // redirect logged in creator to dashboard
-      router.push('/dashboard');
+      redirect('/dashboard');
     }
   }, [creator]);
 

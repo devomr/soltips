@@ -3,11 +3,10 @@
 import { useWallet } from '@solana/wallet-adapter-react';
 import RegisterForm from './register-form';
 import { useGetCreatorByAddress } from '../data-access/crowdfunding-data-access';
-import { useRouter } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import { useEffect } from 'react';
 
 export default function RegisterFeature() {
-  const router = useRouter();
   const { publicKey } = useWallet();
   const { data: creator, isLoading } = useGetCreatorByAddress({
     address: publicKey,
@@ -16,7 +15,7 @@ export default function RegisterFeature() {
   useEffect(() => {
     if (creator) {
       // redirect logged in creator to dashboard
-      router.push('/dashboard');
+      redirect('/dashboard');
     }
   }, [creator]);
 

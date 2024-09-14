@@ -1,7 +1,7 @@
 'use client';
 
 import { useWallet } from '@solana/wallet-adapter-react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { redirect, useSearchParams } from 'next/navigation';
 import { FormEvent, useEffect, useState } from 'react';
 import { z } from 'zod';
 import {
@@ -40,7 +40,6 @@ const initialErrors = {
 export default function RegisterForm() {
   const { publicKey } = useWallet();
   const { registerCreator } = useCrowdfundingProgram();
-  const router = useRouter();
   const queryParams = useSearchParams();
 
   const [registerFormData, setRegisterFormData] = useState<RegisterFormData>(
@@ -108,7 +107,7 @@ export default function RegisterForm() {
     });
 
     // redirect to dashboard after registration
-    router.push('/dashboard');
+    redirect('/dashboard');
   };
 
   return (

@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactNode, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import { CreatorProvider } from '@/context/creator-context';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useGetCreatorByAddress } from '../data-access/crowdfunding-data-access';
@@ -9,7 +9,6 @@ import { getCreatorTheme } from '../utils/theme.util';
 import Sidebar from './sidebar';
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
-  const router = useRouter();
   const { publicKey } = useWallet();
   const { data: creator, isLoading } = useGetCreatorByAddress({
     address: publicKey,
@@ -22,13 +21,13 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     if (!isLoading) {
       if (!creator) {
         // Redirect to the landing page if no creator found
-        router.push('/');
+        redirect('/');
       } else {
         // Stop the loading state once the creator is available
         setLoading(false);
       }
     }
-  }, [creator, isLoading, router]);
+  }, [creator, isLoading]);
 
   if (loading || isLoading) {
     // Display nothing or a loading state until the check is completed
