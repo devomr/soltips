@@ -162,8 +162,8 @@ function CreatorPageForm() {
   );
 
   return (
-    <div className="rounded-box bg-white p-4">
-      <form onSubmit={handleSubmit}>
+    <>
+      <form onSubmit={handleSubmit} className="rounded-box bg-white p-4">
         <div className="space-y-2 divide-y divide-gray-200">
           <div className="py-6">
             <div className="flex items-center justify-between gap-2">
@@ -295,7 +295,7 @@ function CreatorPageForm() {
                   type="color"
                   id="customColorPicker"
                   name="color-picker"
-                  value="#ff0000"
+                  value={customThemeColor}
                   className="absolute cursor-pointer opacity-0"
                   onChange={(e) => {
                     debouncedSetCustomThemeColor(e.target.value);
@@ -370,6 +370,6 @@ function CreatorPageForm() {
         donationItem={formData.donationItem}
         thanksMessage={formData.thanksMessage}
       />
-    </div>
+    </>
   );
 }

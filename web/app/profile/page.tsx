@@ -1,5 +1,5 @@
-import ProfileFeature from '@/components/profile/profile-feature';
+import ProfileSettingsFeature from '@/components/creator-settings/profile-settings-feature';
 
 export default function Page() {
-  return <ProfileFeature />;
+  return <ProfileSettingsFeature />;
 }

@@ -1,44 +1,26 @@
 'use client';
 
 import { useWallet } from '@solana/wallet-adapter-react';
-import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
-import {
-  useCrowdfundingProgram,
-  useGetCreatorByAddress,
-} from '../data-access/crowdfunding-data-access';
-import { z } from 'zod';
+import { useCrowdfundingProgram } from '../data-access/crowdfunding-data-access';
+import DashboardLayout from '../dashboard/dashboard-layout';
+import { useCreator } from '@/context/creator-context';
 import { IconCameraFilled, IconPlus } from '@tabler/icons-react';
+import { useRef, useState, useEffect, ChangeEvent, FormEvent } from 'react';
+import { z } from 'zod';
 import { SocialLinkInput } from './social-link-input';
 import { URL_REGEX } from '../utils/url.util';
 
-type ProfileFormData = {
-  imageUrl: string;
-  fullname: string;
-  bio: string;
-  socialLinks: string[];
-};
-
-type ProfileFormError = {
-  fullname: string;
-  bio: string;
-  socialLinks: string;
-};
-
-const initialProfileFormData: ProfileFormData = {
-  imageUrl: '',
-  fullname: '',
-  bio: '',
-  socialLinks: [],
-};
-
-const initialProfileFormError: ProfileFormError = {
-  fullname: '',
-  bio: '',
-  socialLinks: '',
-};
+export default function ProfileSettingsFeature() {
+  return (
+    <DashboardLayout>
+      <ProfileForm />
+    </DashboardLayout>
+  );
+}
 
 // Define the Zod schema for validation
 const profileFormSchema = z.object({
+  imageUrl: z.string(),
   fullname: z
     .string()
     .min(3, 'Fullname must be at least 3 characters')
@@ -54,9 +36,25 @@ const profileFormSchema = z.object({
     .max(5, 'You can have at most 5 social links'),
 });
 
-export default function EditProfileForm() {
+// Define TypeScript type based on Zod schema
+type ProfileFormData = z.infer<typeof profileFormSchema>;
+
+const initialData: ProfileFormData = {
+  imageUrl: '',
+  fullname: '',
+  bio: '',
+  socialLinks: [],
+};
+
+const initialErrors = {
+  fullname: '',
+  bio: '',
+  socialLinks: '',
+};
+
+function ProfileForm() {
   const { publicKey } = useWallet();
-  const { data: creator } = useGetCreatorByAddress({ address: publicKey });
+  const { creator } = useCreator();
 
   const { updateCreatorProfile } = useCrowdfundingProgram();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -64,16 +62,13 @@ export default function EditProfileForm() {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [uploading, setUploading] = useState<boolean>(false);
-  const [profileFormData, setProfileFormData] = useState<ProfileFormData>(
-    initialProfileFormData,
-  );
-  const [errors, setErrors] = useState<ProfileFormError>(
-    initialProfileFormError,
-  );
+
+  const [formData, setFormData] = useState<ProfileFormData>(initialData);
+  const [errors, setErrors] = useState<typeof initialErrors>(initialErrors);
 
   useEffect(() => {
     if (creator) {
-      setProfileFormData((prevState) => ({
+      setFormData((prevState) => ({
         ...prevState,
         imageUrl: creator.imageUrl,
         fullname: creator.fullname,
@@ -103,15 +98,6 @@ export default function EditProfileForm() {
     }
   };
 
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    setProfileFormData({
-      ...profileFormData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -121,10 +107,10 @@ export default function EditProfileForm() {
     }
 
     // Clear previous errors
-    setErrors(initialProfileFormError);
+    setErrors(initialErrors);
 
     // Validate the update profile form fields
-    const validationResult = profileFormSchema.safeParse(profileFormData);
+    const validationResult = profileFormSchema.safeParse(formData);
 
     if (validationResult.error) {
       const fieldErrors = validationResult.error.formErrors.fieldErrors;
@@ -139,39 +125,40 @@ export default function EditProfileForm() {
     }
 
     await updateCreatorProfile.mutateAsync({
-      ...profileFormData,
+      imageUrl: formData.imageUrl,
+      fullname: formData.fullname,
+      bio: formData.bio,
+      socialLinks: formData.socialLinks,
       owner: publicKey,
     });
   };
 
   const handleAddSocialLink = () => {
-    setProfileFormData((prevState) => ({
+    setFormData((prevState) => ({
       ...prevState,
       socialLinks: [...prevState.socialLinks, ''],
     }));
   };
 
   const handleSocialLinkChange = (index: number, value: string) => {
-    const newSocialLinks = [...profileFormData.socialLinks];
+    const newSocialLinks = [...formData.socialLinks];
     newSocialLinks[index] = value;
-    setProfileFormData((prevState) => ({
+    setFormData((prevState) => ({
       ...prevState,
       socialLinks: newSocialLinks,
     }));
   };
 
   const handleRemoveSocialLink = (index: number) => {
-    const newSocialLinks = profileFormData.socialLinks.filter(
-      (_, i) => i !== index,
-    );
-    setProfileFormData((prevState) => ({
+    const newSocialLinks = formData.socialLinks.filter((_, i) => i !== index);
+    setFormData((prevState) => ({
       ...prevState,
       socialLinks: newSocialLinks,
     }));
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="rounded-box bg-white p-4">
       <div className="divide-y divide-gray-200">
         <div className="py-6">
           <div
@@ -204,11 +191,16 @@ export default function EditProfileForm() {
             type="text"
             id="fullname"
             name="fullname"
-            value={profileFormData.fullname}
+            value={formData.fullname}
             placeholder="John Smith"
             className="input mt-2 w-full border-2 bg-gray-100 focus:border-slate-900 focus:bg-white focus:outline-none"
-            onChange={handleChange}
             required
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                fullname: e.target.value,
+              })
+            }
           />
           {errors.fullname && (
             <p className="text-sm text-red-600">{errors.fullname}</p>
@@ -223,8 +215,13 @@ export default function EditProfileForm() {
             name="bio"
             className="textarea textarea-md mt-2 w-full border-2 bg-gray-100 text-base focus:border-slate-900 focus:bg-white focus:outline-none"
             placeholder="Blockchain Developer and coffee lover"
-            value={profileFormData.bio}
-            onChange={handleChange}
+            value={formData.bio}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                bio: e.target.value,
+              })
+            }
           ></textarea>
           {errors.bio && <p className="text-sm text-red-600">{errors.bio}</p>}
         </div>
@@ -235,7 +232,7 @@ export default function EditProfileForm() {
               type="button"
               onClick={handleAddSocialLink}
               className="btn btn-sm rounded-full"
-              disabled={profileFormData.socialLinks.length >= 5}
+              disabled={formData.socialLinks.length >= 5}
             >
               <IconPlus />
               Add social link
@@ -243,7 +240,7 @@ export default function EditProfileForm() {
           </div>
 
           <div className="mt-2 space-y-2">
-            {profileFormData.socialLinks.map((link, index) => (
+            {formData.socialLinks.map((link, index) => (
               <SocialLinkInput
                 key={index}
                 link={link}
@@ -252,7 +249,7 @@ export default function EditProfileForm() {
                 onRemove={handleRemoveSocialLink}
               />
             ))}
-            {profileFormData.socialLinks.length === 0 && (
+            {formData.socialLinks.length === 0 && (
               <p className="text-sm text-gray-500">
                 You have no social links added yet, but you can add up to 5.
               </p>
