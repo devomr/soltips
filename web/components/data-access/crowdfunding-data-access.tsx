@@ -25,6 +25,7 @@ export type Creator = {
   donationItem: string;
   themeColor: string;
   supportersCount: BN;
+  campaignsCount: BN;
   supporterDonationsAmount: BN;
   thanksMessage: string;
 };

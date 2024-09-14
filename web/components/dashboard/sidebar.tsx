@@ -1,14 +1,11 @@
-// components/Sidebar.tsx
 import Link from 'next/link';
 import {
   IconAppWindow,
   IconHeartHandshake,
-  IconHome,
   IconLayoutDashboard,
   IconMenu2,
   IconMoneybag,
   IconSettings,
-  IconSquareX,
   IconUser,
   IconX,
 } from '@tabler/icons-react';
@@ -16,7 +13,7 @@ import { useState } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useGetCreatorByAddress } from '../data-access/crowdfunding-data-access';
 
-const Sidebar = () => {
+export default function Sidebar() {
   const { publicKey } = useWallet();
   const { data: creator } = useGetCreatorByAddress({ address: publicKey });
 
@@ -124,6 +121,4 @@ const Sidebar = () => {
       )}
     </>
   );
-};
-
-export default Sidebar;
+}

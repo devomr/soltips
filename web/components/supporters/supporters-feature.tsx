@@ -1,31 +1,28 @@
 'use client';
 
-import { useWallet } from '@solana/wallet-adapter-react';
-import { useRouter } from 'next/navigation';
-import { useGetCreatorByAddress } from '../data-access/crowdfunding-data-access';
-import { useEffect } from 'react';
 import DashboardLayout from '../dashboard/dashboard-layout';
 import { SupportersList } from './supporters-list';
+import { useCreator } from '@/context/creator-context';
 
-export default function SupportersFeature() {
-  const router = useRouter();
-  const { publicKey } = useWallet();
-  const { data: creator } = useGetCreatorByAddress({ address: publicKey });
+export default function ManageSupportersFeature() {
+  return (
+    <DashboardLayout>
+      <ManageSupportersSection />
+    </DashboardLayout>
+  );
+}
 
-  // useEffect(() => {
-  //   if (!creator) {
-  //     router.push('/');
-  //   }
-  // }, [creator, router]);
+function ManageSupportersSection() {
+  const { creator } = useCreator();
 
-  if (creator) {
-    return (
-      <DashboardLayout>
-        <div className="rounded-box bg-white p-4">
-          <h2 className="mb-4 text-xl font-semibold">Supporters 🤝</h2>
-          <SupportersList username={creator.username} />
-        </div>
-      </DashboardLayout>
-    );
+  if (!creator) {
+    return null;
   }
+
+  return (
+    <div className="rounded-box bg-white p-4">
+      <h2 className="mb-4 text-xl font-semibold">Supporters 🤝</h2>
+      <SupportersList creator={creator} />
+    </div>
+  );
 }

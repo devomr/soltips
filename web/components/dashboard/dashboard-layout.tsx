@@ -1,65 +1,52 @@
-// components/Layout.tsx
-import { ReactNode } from 'react';
-import Sidebar from './sidebar';
+'use client';
+
+import { ReactNode, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { CreatorProvider } from '@/context/creator-context';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useGetCreatorByAddress } from '../data-access/crowdfunding-data-access';
-import NoData from '../shared/no-data';
-import { getRGBColor, getAccessibleTextColor } from '../utils/theme.util';
-import { LoadingSpinner } from '../shared/loading';
+import { getCreatorTheme } from '../utils/theme.util';
+import Sidebar from './sidebar';
 
-interface DashboardLayoutProps {
-  children: ReactNode;
-}
-
-function getCreatorTheme(color: string) {
-  const primaryColor = getRGBColor(color, 'creator-theme-color');
-  const textColor100 = getRGBColor(
-    getAccessibleTextColor(color, 1),
-    'creator-theme-text-color-100',
-  );
-  const textColor20 = getRGBColor(
-    getAccessibleTextColor(color, 0.2),
-    'creator-theme-text-color-20',
-  );
-
-  return {
-    ...primaryColor,
-    ...textColor100,
-    ...textColor20,
-  } as React.CSSProperties;
-}
-
-const DashboardLayout = ({ children }: DashboardLayoutProps) => {
+export default function DashboardLayout({ children }: { children: ReactNode }) {
+  const router = useRouter();
   const { publicKey } = useWallet();
   const { data: creator, isLoading } = useGetCreatorByAddress({
     address: publicKey,
   });
 
-  if (isLoading) {
-    return (
-      <LoadingSpinner className="mt-4">Loading your profile...</LoadingSpinner>
-    );
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Prevent redirection until both the creator data and wallet connection are checked
+    if (!isLoading) {
+      if (!creator) {
+        // Redirect to the landing page if no creator found
+        router.push('/');
+      } else {
+        // Stop the loading state once the creator is available
+        setLoading(false);
+      }
+    }
+  }, [creator, isLoading, router]);
+
+  if (loading || isLoading) {
+    // Display nothing or a loading state until the check is completed
+    return null;
   }
 
-  if (!creator) {
+  if (creator) {
     return (
-      <div className="mx-auto max-w-screen-xl p-4">
-        <NoData className="my-4">Your profile cannot be found.</NoData>
-      </div>
-    );
-  }
-
-  return (
-    <CreatorProvider creator={creator}>
-      <div style={getCreatorTheme(creator.themeColor)}>
-        <div className="flex h-screen">
-          <Sidebar />
-          <div className="flex-1 overflow-auto bg-gray-100 p-4">{children}</div>
+      <CreatorProvider creator={creator}>
+        <div style={getCreatorTheme(creator.themeColor)}>
+          <div className="flex h-screen">
+            <Sidebar />
+            <div className="flex-1 overflow-auto bg-gray-100 p-4">
+              {children}
+            </div>
+          </div>
         </div>
-      </div>
-    </CreatorProvider>
-  );
-};
-
-export default DashboardLayout;
+      </CreatorProvider>
+    );
+  }
+}

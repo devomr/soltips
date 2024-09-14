@@ -1,17 +1,18 @@
-import { useSupporterDonations } from '@/components/data-access/crowdfunding-data-access';
+import {
+  Creator,
+  useSupporterDonations,
+} from '@/components/data-access/crowdfunding-data-access';
 import NoData from '@/components/shared/no-data';
 import { useCluster } from '../cluster/cluster-data-access';
 import RelativeTime from '../shared/relative-time';
 import { lamportsToSol } from '../utils/conversion.util';
 import { LoadingSpinner } from '../shared/loading';
 
-type SupportersListProps = {
-  username: string;
-};
-
-export const SupportersList: React.FC<SupportersListProps> = ({ username }) => {
+export function SupportersList({ creator }: { creator: Creator }) {
   const { getExplorerUrl } = useCluster();
-  const { data, isLoading } = useSupporterDonations({ username: username });
+  const { data, isLoading } = useSupporterDonations({
+    username: creator.username,
+  });
 
   if (isLoading) {
     return (
@@ -76,4 +77,4 @@ export const SupportersList: React.FC<SupportersListProps> = ({ username }) => {
       </table>
     </div>
   );
-};
+}

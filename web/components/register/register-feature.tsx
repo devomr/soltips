@@ -9,7 +9,9 @@ import { useEffect } from 'react';
 export default function RegisterFeature() {
   const router = useRouter();
   const { publicKey } = useWallet();
-  const { data: creator } = useGetCreatorByAddress({ address: publicKey });
+  const { data: creator, isLoading } = useGetCreatorByAddress({
+    address: publicKey,
+  });
 
   useEffect(() => {
     if (creator) {
@@ -17,6 +19,10 @@ export default function RegisterFeature() {
       router.push('/dashboard');
     }
   }, [creator]);
+
+  if (isLoading) {
+    return null;
+  }
 
   return (
     <div className="mx-4 mt-6 max-w-full md:mx-auto md:max-w-[600px]">
