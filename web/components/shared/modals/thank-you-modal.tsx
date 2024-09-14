@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { Creator } from '@/components/data-access/crowdfunding-data-access';
 import { UserAvatar } from '../user-avatar';
+import { Creator } from '@/data-access/crowdfunding-data-access';
 
 export default function ThankYouModal({
   hide,

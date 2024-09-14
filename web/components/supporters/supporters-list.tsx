@@ -1,18 +1,17 @@
-import {
-  Creator,
-  useSupporterDonations,
-} from '@/components/data-access/crowdfunding-data-access';
 import NoData from '@/components/shared/no-data';
 import { useCluster } from '../cluster/cluster-data-access';
 import RelativeTime from '../shared/relative-time';
 import { lamportsToSol } from '../utils/conversion.util';
 import { LoadingSpinner } from '../shared/loading';
+import {
+  Creator,
+  useCrowdfundingProgram,
+} from '@/data-access/crowdfunding-data-access';
 
 export function SupportersList({ creator }: { creator: Creator }) {
   const { getExplorerUrl } = useCluster();
-  const { data, isLoading } = useSupporterDonations({
-    username: creator.username,
-  });
+  const { listSupporterDonations } = useCrowdfundingProgram();
+  const { data, isLoading } = listSupporterDonations(creator.username);
 
   if (isLoading) {
     return (

@@ -1,8 +1,3 @@
-import {
-  Creator,
-  useCampaigns,
-  Campaign,
-} from '@/components/data-access/crowdfunding-data-access';
 import { LoadingSpinner } from '@/components/shared/loading';
 import NoData from '@/components/shared/no-data';
 import { useState } from 'react';
@@ -10,11 +5,16 @@ import { MakeCampaignDonationModal } from './modals/make-campaign-donation-modal
 import { lamportsToSol } from '@/components/utils/conversion.util';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { IconGift } from '@tabler/icons-react';
+import {
+  Campaign,
+  Creator,
+  useCrowdfundingProgram,
+} from '@/data-access/crowdfunding-data-access';
 
 export function CreatorCampaignsList({ creator }: { creator: Creator }) {
-  const { data: campaigns, isLoading } = useCampaigns({
-    address: creator.owner,
-  });
+  const { listCampaigns } = useCrowdfundingProgram();
+  const { data: campaigns, isLoading } = listCampaigns(creator.owner);
+
   const [showMakeDonationModal, setShowMakeDonationModal] = useState(false);
   const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(
     null,

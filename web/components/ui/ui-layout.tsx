@@ -5,7 +5,7 @@ import { ReactNode, Suspense, useEffect, useRef } from 'react';
 import { AccountChecker } from '../account/account-ui';
 import { ClusterChecker, ExplorerLink } from '../cluster/cluster-ui';
 import toast, { Toaster } from 'react-hot-toast';
-import { Navbar } from '../navbar/navbar';
+import { Navbar } from '../shared/navigation/navbar';
 
 type ModalButtonStyle = {
   creatorTheme: boolean;

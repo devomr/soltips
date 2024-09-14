@@ -11,11 +11,12 @@ import {
 } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { useGetCreatorByAddress } from '../data-access/crowdfunding-data-access';
+import { useCrowdfundingProgram } from '@/data-access/crowdfunding-data-access';
 
 export default function Sidebar() {
   const { publicKey } = useWallet();
-  const { data: creator } = useGetCreatorByAddress({ address: publicKey });
+  const { getCreatorByAddress } = useCrowdfundingProgram();
+  const { data: creator } = getCreatorByAddress(publicKey);
 
   const [isOpen, setIsOpen] = useState(false);
   const username = creator?.username || '';

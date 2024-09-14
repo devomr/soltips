@@ -1,8 +1,8 @@
 import Link from 'next/link';
-import { WalletButton } from '../solana/solana-provider';
-import { AccountBalance } from '../account/account-ui';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useMemo } from 'react';
+import { AccountBalance } from '@/components/account/account-ui';
+import { WalletButton } from '@/components/solana/solana-provider';
 
 export function Navbar() {
   const { publicKey } = useWallet();

@@ -1,7 +1,3 @@
-import {
-  Campaign,
-  useCrowdfundingProgram,
-} from '@/components/data-access/crowdfunding-data-access';
 import { AppModal } from '@/components/ui/ui-layout';
 import {
   lamportsToSol,
@@ -11,6 +7,10 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { useState } from 'react';
 import { z } from 'zod';
 import { CAMPAIGN_DONATION_MIN_AMOUNT } from '@/components/utils/constants';
+import {
+  Campaign,
+  useCrowdfundingProgram,
+} from '@/data-access/crowdfunding-data-access';
 
 export function MakeCampaignDonationModal({
   hide,
@@ -98,7 +98,7 @@ export function MakeCampaignDonationModal({
         makeCampaignDonation
           .mutateAsync({
             id: campaignId,
-            name: formData.message,
+            message: formData.message,
             amount: solToLamports(formData.amount ?? 0),
             address: campaign.owner,
             campaignId: campaign.id,

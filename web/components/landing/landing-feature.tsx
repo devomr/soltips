@@ -3,9 +3,8 @@
 import { useWallet } from '@solana/wallet-adapter-react';
 import { redirect } from 'next/navigation';
 import { useEffect } from 'react';
-import { useGetCreatorByAddress } from '../data-access/crowdfunding-data-access';
-import { FeatureCard } from './feature-card';
 import UsernameForm from './username-form';
+import { useCrowdfundingProgram } from '@/data-access/crowdfunding-data-access';
 
 const featureCards = [
   {
@@ -42,7 +41,8 @@ const featureCards = [
 
 export default function LandingFeature() {
   const { publicKey } = useWallet();
-  const { data: creator } = useGetCreatorByAddress({ address: publicKey });
+  const { getCreatorByAddress } = useCrowdfundingProgram();
+  const { data: creator } = getCreatorByAddress(publicKey);
 
   useEffect(() => {
     if (creator) {

@@ -1,13 +1,10 @@
 'use client';
 
+import { useCrowdfundingProgram } from '@/data-access/crowdfunding-data-access';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { redirect, useSearchParams } from 'next/navigation';
+import { redirect, useRouter, useSearchParams } from 'next/navigation';
 import { FormEvent, useEffect, useState } from 'react';
 import { z } from 'zod';
-import {
-  useCheckUsername,
-  useCrowdfundingProgram,
-} from '../data-access/crowdfunding-data-access';
 
 // Define the Zod schema for validation
 const registerFormSchema = z.object({
@@ -38,8 +35,9 @@ const initialErrors = {
 };
 
 export default function RegisterForm() {
+  const router = useRouter();
   const { publicKey } = useWallet();
-  const { registerCreator } = useCrowdfundingProgram();
+  const { registerCreator, checkUsername } = useCrowdfundingProgram();
   const queryParams = useSearchParams();
 
   const [registerFormData, setRegisterFormData] = useState<RegisterFormData>(
@@ -47,9 +45,7 @@ export default function RegisterForm() {
   );
   const [errors, setErrors] = useState<typeof initialErrors>(initialErrors);
 
-  const { data: usernameRecord } = useCheckUsername({
-    username: registerFormData.username,
-  });
+  const { data: usernameRecord } = checkUsername(registerFormData.username);
 
   // get the username from query parameters
   const username = queryParams.get('username');
@@ -107,7 +103,7 @@ export default function RegisterForm() {
     });
 
     // redirect to dashboard after registration
-    redirect('/dashboard');
+    router.push('/dashboard');
   };
 
   return (

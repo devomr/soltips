@@ -1,6 +1,5 @@
 'use client';
 
-import DashboardLayout from './dashboard-layout';
 import { UserAvatar } from '../shared/user-avatar';
 import Link from 'next/link';
 import {
@@ -12,6 +11,7 @@ import AnimatedCardNumber from '../shared/cards/animated-card-number';
 import { ShareButton } from '../shared/buttons/share-button';
 import { lamportsToSol } from '../utils/conversion.util';
 import { useCreator } from '@/context/creator-context';
+import DashboardLayout from '../layouts/dashboard-layout';
 
 export default function DashboardFeature() {
   return (

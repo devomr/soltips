@@ -2,13 +2,13 @@
 
 import { ReactNode, useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { useGetCreatorByUsername } from '../data-access/crowdfunding-data-access';
 import { CreatorProvider } from '@/context/creator-context';
 import { LoadingSpinner } from '../shared/loading';
 import { Alert } from '../shared/alert';
 import { getCreatorTheme } from '../utils/theme.util';
 import { CreatorHeader, CreatorTabs } from './creator-ui';
 import { CreatorTab } from './types/creator-tab.type';
+import { useCrowdfundingProgram } from '@/data-access/crowdfunding-data-access';
 
 const creatorTabs: CreatorTab[] = [
   { id: 1, label: 'About', path: '' },
@@ -16,6 +16,8 @@ const creatorTabs: CreatorTab[] = [
 ];
 
 export function CreatorLayout({ children }: { children: ReactNode }) {
+  const { getCreatorByUsername } = useCrowdfundingProgram();
+
   const [activePath, setActivePath] = useState<string | null>(null);
   const params = useParams<{ username: string }>();
   const {
@@ -23,9 +25,7 @@ export function CreatorLayout({ children }: { children: ReactNode }) {
     isLoading,
     isSuccess,
     isError,
-  } = useGetCreatorByUsername({
-    username: params.username,
-  });
+  } = getCreatorByUsername(params.username);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {

@@ -1,12 +1,13 @@
-import { useSupporterDonations } from '@/components/data-access/crowdfunding-data-access';
 import { LoadingSpinner } from '@/components/shared/loading';
 import { PublicKey } from '@solana/web3.js';
 import { useCluster } from '@/components/cluster/cluster-data-access';
-import { getDonationItem } from '@/components/data-access/local-data-access';
 import { Alert } from '@/components/shared/alert';
+import { useCrowdfundingProgram } from '@/data-access/crowdfunding-data-access';
+import { getDonationItem } from '@/data-access/local-data-access';
 
 export function SupporterDonations({ username }: { username: string }) {
-  const { data, isLoading } = useSupporterDonations({ username: username });
+  const { listSupporterDonations } = useCrowdfundingProgram();
+  const { data, isLoading } = listSupporterDonations(username);
 
   if (isLoading) {
     return <LoadingSpinner>Loading the recent supporters...</LoadingSpinner>;

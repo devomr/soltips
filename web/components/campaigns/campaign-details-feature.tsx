@@ -1,13 +1,7 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import {
-  Campaign,
-  Creator,
-  useCampaign,
-  useCrowdfundingProgram,
-  useGetCreatorByUsername,
-} from '@/components/data-access/crowdfunding-data-access';
+
 import { useWallet } from '@solana/wallet-adapter-react';
 import { lamportsToSol, solToLamports } from '../utils/conversion.util';
 import { FormEvent, useState } from 'react';
@@ -16,16 +10,20 @@ import { Alert } from '../shared/alert';
 import { getCreatorTheme } from '../utils/theme.util';
 import { z } from 'zod';
 import { CAMPAIGN_DONATION_MIN_AMOUNT } from '../utils/constants';
+import {
+  Creator,
+  Campaign,
+  useCrowdfundingProgram,
+} from '@/data-access/crowdfunding-data-access';
 
 export default function CampaignDetailsFeature() {
   const params = useParams<{ username: string; campaignId: string }>();
+  const { getCreatorByUsername } = useCrowdfundingProgram();
   const {
     data: creator,
     isLoading,
     isError,
-  } = useGetCreatorByUsername({
-    username: params.username,
-  });
+  } = getCreatorByUsername(params.username);
 
   if (isLoading) {
     return (
@@ -58,10 +56,9 @@ function CampaignDetails({
   creator: Creator;
   campaignId: string;
 }) {
-  const { data: campaign, isLoading } = useCampaign({
-    address: creator.owner,
-    id: campaignId,
-  });
+  const { getCampaign } = useCrowdfundingProgram();
+
+  const { data: campaign, isLoading } = getCampaign(creator.owner, campaignId);
 
   if (!campaign) {
     return null;
@@ -157,7 +154,7 @@ function CampaignDonationForm({ campaign }: { campaign: Campaign }) {
 
     await makeCampaignDonation.mutateAsync({
       id: campaign.id.toNumber(),
-      name: formData.message,
+      message: formData.message,
       amount: solToLamports(formData.amount),
       address: campaign.owner,
       campaignId: campaign.id,

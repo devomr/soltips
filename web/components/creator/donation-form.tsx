@@ -2,14 +2,14 @@
 
 import { FormEvent, useState } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
+import { lamportsToSol } from '../utils/conversion.util';
+import ThankYouModal from '../shared/modals/thank-you-modal';
+import { DONATION_MESSAGE_MAX_LENGTH } from '../utils/constants';
 import {
   Creator,
   useCrowdfundingProgram,
-} from '../data-access/crowdfunding-data-access';
-import { lamportsToSol } from '../utils/conversion.util';
-import ThankYouModal from '../shared/modals/thank-you-modal';
-import { getDonationItem } from '../data-access/local-data-access';
-import { DONATION_MESSAGE_MAX_LENGTH } from '../utils/constants';
+} from '@/data-access/crowdfunding-data-access';
+import { getDonationItem } from '@/data-access/local-data-access';
 
 const donationOptions = [1, 3, 5];
 

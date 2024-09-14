@@ -2,7 +2,7 @@
 
 import { useState, FormEvent, ChangeEvent, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useCheckUsername } from '../data-access/crowdfunding-data-access';
+import { useCrowdfundingProgram } from '@/data-access/crowdfunding-data-access';
 
 export default function UsernameForm() {
   const [username, setUsername] = useState<string>('');
@@ -10,7 +10,9 @@ export default function UsernameForm() {
   const [touched, setTouched] = useState<boolean>(false);
 
   const router = useRouter();
-  const { data: usernameRecord } = useCheckUsername({ username: username });
+  const { checkUsername } = useCrowdfundingProgram();
+
+  const { data: usernameRecord } = checkUsername(username);
 
   const validateUsername = (value: string) => {
     if (value === '') {
@@ -30,7 +32,6 @@ export default function UsernameForm() {
       const error = validateUsername(username.trim());
       setError(error);
     }
-
   }, [username, usernameRecord]);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -70,7 +71,7 @@ export default function UsernameForm() {
           Claim
         </button>
       </div>
-      {error && <p className='text-red-500 text-sm'>{error}</p>}
+      {error && <p className="text-sm text-red-500">{error}</p>}
     </form>
   );
-};
+}

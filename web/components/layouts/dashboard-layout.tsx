@@ -4,15 +4,14 @@ import { ReactNode, useEffect, useState } from 'react';
 import { redirect } from 'next/navigation';
 import { CreatorProvider } from '@/context/creator-context';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { useGetCreatorByAddress } from '../data-access/crowdfunding-data-access';
 import { getCreatorTheme } from '../utils/theme.util';
-import Sidebar from './sidebar';
+import Sidebar from '../shared/navigation/sidebar';
+import { useCrowdfundingProgram } from '@/data-access/crowdfunding-data-access';
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const { publicKey } = useWallet();
-  const { data: creator, isLoading } = useGetCreatorByAddress({
-    address: publicKey,
-  });
+  const { getCreatorByAddress } = useCrowdfundingProgram();
+  const { data: creator, isLoading } = getCreatorByAddress(publicKey);
 
   const [loading, setLoading] = useState(true);
 

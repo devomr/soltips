@@ -1,12 +1,12 @@
-import {
-  Campaign,
-  useCrowdfundingProgram,
-} from '@/components/data-access/crowdfunding-data-access';
 import { AppModal } from '@/components/ui/ui-layout';
 import {
   lamportsToSol,
   solToLamports,
 } from '@/components/utils/conversion.util';
+import {
+  Campaign,
+  useCrowdfundingProgram,
+} from '@/data-access/crowdfunding-data-access';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useState, useEffect } from 'react';
 import { z } from 'zod';

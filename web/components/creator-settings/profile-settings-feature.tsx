@@ -1,14 +1,14 @@
 'use client';
 
 import { useWallet } from '@solana/wallet-adapter-react';
-import { useCrowdfundingProgram } from '../data-access/crowdfunding-data-access';
-import DashboardLayout from '../dashboard/dashboard-layout';
 import { useCreator } from '@/context/creator-context';
 import { IconCameraFilled, IconPlus } from '@tabler/icons-react';
 import { useRef, useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { z } from 'zod';
 import { SocialLinkInput } from './social-link-input';
 import { URL_REGEX } from '../utils/url.util';
+import DashboardLayout from '../layouts/dashboard-layout';
+import { useCrowdfundingProgram } from '@/data-access/crowdfunding-data-access';
 
 export default function ProfileSettingsFeature() {
   return (

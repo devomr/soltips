@@ -2,15 +2,14 @@
 
 import { useWallet } from '@solana/wallet-adapter-react';
 import RegisterForm from './register-form';
-import { useGetCreatorByAddress } from '../data-access/crowdfunding-data-access';
 import { redirect } from 'next/navigation';
 import { useEffect } from 'react';
+import { useCrowdfundingProgram } from '@/data-access/crowdfunding-data-access';
 
 export default function RegisterFeature() {
   const { publicKey } = useWallet();
-  const { data: creator, isLoading } = useGetCreatorByAddress({
-    address: publicKey,
-  });
+  const { getCreatorByAddress } = useCrowdfundingProgram();
+  const { data: creator, isLoading } = getCreatorByAddress(publicKey);
 
   useEffect(() => {
     if (creator) {

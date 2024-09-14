@@ -3,17 +3,17 @@
 import { IconPlus } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useCreator } from '@/context/creator-context';
-import DashboardLayout from '@/components/dashboard/dashboard-layout';
 import { CreateCampaignModal } from './ui/modals/create-campaign-modal';
-import {
-  Campaign,
-  Creator,
-  useCampaigns,
-} from '../data-access/crowdfunding-data-access';
 import NoData from '../shared/no-data';
 import { LoadingSpinner } from '../shared/loading';
 import { lamportsToSol } from '../utils/conversion.util';
 import { WithdrawCampaignFunds } from './ui/modals/withdraw-campaign-funds';
+import DashboardLayout from '../layouts/dashboard-layout';
+import {
+  Campaign,
+  Creator,
+  useCrowdfundingProgram,
+} from '@/data-access/crowdfunding-data-access';
 
 export default function ManageCampaignsFeature() {
   return (
@@ -56,9 +56,9 @@ function ManageCampaignsSection() {
 }
 
 function ManageCampaignsList({ creator }: { creator: Creator }) {
-  const { data: campaigns, isLoading } = useCampaigns({
-    address: creator.owner,
-  });
+  const { listCampaigns } = useCrowdfundingProgram();
+  const { data: campaigns, isLoading } = listCampaigns(creator.owner);
+
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(
     null,

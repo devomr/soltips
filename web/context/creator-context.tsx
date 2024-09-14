@@ -1,4 +1,4 @@
-import { Creator } from '@/components/data-access/crowdfunding-data-access';
+import { Creator } from '@/data-access/crowdfunding-data-access';
 import React, { createContext, useContext, ReactNode } from 'react';
 
 interface CreatorContextProps {

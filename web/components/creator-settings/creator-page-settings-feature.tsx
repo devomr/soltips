@@ -2,23 +2,23 @@
 
 import { useWallet } from '@solana/wallet-adapter-react';
 import { FormEvent, useCallback, useEffect, useState } from 'react';
-import { useCrowdfundingProgram } from '../data-access/crowdfunding-data-access';
 import { z } from 'zod';
 import { IconCheck, IconEye, IconPalette } from '@tabler/icons-react';
 import { lamportsToSol, solToLamports } from '../utils/conversion.util';
 import ThankYouModal from '../shared/modals/thank-you-modal';
-import {
-  getDonationItems,
-  getThemeColors,
-} from '../data-access/local-data-access';
 import {
   THANKS_MESSAGE_MAX_LENGTH,
   PRICE_PER_DONATION_MIN_VALUE,
   PRICE_PER_DONATION_MAX_VALUE,
 } from '../utils/constants';
 import { debounce } from '../utils/debounce.util';
-import DashboardLayout from '../dashboard/dashboard-layout';
 import { useCreator } from '@/context/creator-context';
+import DashboardLayout from '../layouts/dashboard-layout';
+import { useCrowdfundingProgram } from '@/data-access/crowdfunding-data-access';
+import {
+  getThemeColors,
+  getDonationItems,
+} from '@/data-access/local-data-access';
 
 export default function CreatorPageSettingsFeature() {
   return (

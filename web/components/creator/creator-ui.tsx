@@ -1,9 +1,9 @@
 import Link from 'next/link';
-import { Creator } from '../data-access/crowdfunding-data-access';
 import { ShareButton } from '../shared/buttons/share-button';
 import { UserAvatar } from '../shared/user-avatar';
 import { CreatorTab } from './types/creator-tab.type';
 import { SocialIcon } from '../shared/icons/social-icon';
+import { Creator } from '@/data-access/crowdfunding-data-access';
 
 export function CreatorHeader({ creator }: { creator: Creator }) {
   return (
@@ -70,8 +70,8 @@ export function CreatorTabs({
 export function SocialLinks({ links }: { links: string[] }) {
   return (
     <div className="flex gap-2">
-      {links.map((link) => (
-        <a href={link} target="_blank" rel="noopener noreferrer">
+      {links.map((link, index) => (
+        <a key={index} href={link} target="_blank" rel="noopener noreferrer">
           <SocialIcon url={link} size={28} />
         </a>
       ))}

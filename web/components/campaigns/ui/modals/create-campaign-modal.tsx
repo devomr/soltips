@@ -1,6 +1,6 @@
-import { useCrowdfundingProgram } from '@/components/data-access/crowdfunding-data-access';
 import { AppModal } from '@/components/ui/ui-layout';
 import { solToLamports } from '@/components/utils/conversion.util';
+import { useCrowdfundingProgram } from '@/data-access/crowdfunding-data-access';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
 import { useEffect, useState } from 'react';
@@ -180,6 +180,7 @@ export function CreateCampaignModal({
               type="checkbox"
               className="checkbox"
               checked={formData.isTargetAmountVisible}
+              disabled={createCampaign.isPending}
               onChange={(e) =>
                 setFormData((prevValues) => ({
                   ...prevValues,

@@ -1,6 +1,6 @@
 'use client';
 
-import DashboardLayout from '../dashboard/dashboard-layout';
+import DashboardLayout from '../layouts/dashboard-layout';
 import { SupportersList } from './supporters-list';
 import { useCreator } from '@/context/creator-context';
 
