@@ -228,7 +228,13 @@ function CreatorPageForm() {
                 <button
                   key={index}
                   type="button"
-                  className={`btn btn-sm rounded-full ${formData.donationItem === item.value ? 'btn-active' : ''}`}
+                  className={`btn btn-sm rounded-full outline-offset-1 ${formData.donationItem === item.value ? 'btn-active' : ''}`}
+                  style={{
+                    outline:
+                      formData.donationItem === item.value
+                        ? 'solid 2px #c7c8c8'
+                        : 'none',
+                  }}
                   onClick={() =>
                     setFormData({
                       ...formData,
