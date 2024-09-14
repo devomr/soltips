@@ -2,36 +2,12 @@
 
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { z } from 'zod';
 import {
   useCheckUsername,
   useCrowdfundingProgram,
 } from '../data-access/crowdfunding-data-access';
-
-type RegisterFormData = {
-  username: string;
-  fullname: string;
-  bio: string;
-};
-
-type RegisterFormError = {
-  username: string;
-  fullname: string;
-  bio: string;
-};
-
-const initialRegisterFormData: RegisterFormData = {
-  username: '',
-  fullname: '',
-  bio: '',
-};
-
-const initialRegisterFormError: RegisterFormError = {
-  username: '',
-  fullname: '',
-  bio: '',
-};
 
 // Define the Zod schema for validation
 const registerFormSchema = z.object({
@@ -46,6 +22,21 @@ const registerFormSchema = z.object({
   bio: z.string().max(250, 'Bio must be at most 250 characters'),
 });
 
+// Define TypeScript type based on Zod schema
+type RegisterFormData = z.infer<typeof registerFormSchema>;
+
+const initialRegisterFormData: RegisterFormData = {
+  username: '',
+  fullname: '',
+  bio: '',
+};
+
+const initialErrors = {
+  username: '',
+  fullname: '',
+  bio: '',
+};
+
 export default function RegisterForm() {
   const { publicKey } = useWallet();
   const { registerCreator } = useCrowdfundingProgram();
@@ -55,9 +46,7 @@ export default function RegisterForm() {
   const [registerFormData, setRegisterFormData] = useState<RegisterFormData>(
     initialRegisterFormData,
   );
-  const [errors, setErrors] = useState<RegisterFormError>(
-    initialRegisterFormError,
-  );
+  const [errors, setErrors] = useState<typeof initialErrors>(initialErrors);
 
   const { data: usernameRecord } = useCheckUsername({
     username: registerFormData.username,
@@ -75,15 +64,6 @@ export default function RegisterForm() {
     }
   }, [username]);
 
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    setRegisterFormData({
-      ...registerFormData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -93,7 +73,7 @@ export default function RegisterForm() {
     }
 
     // Clear previous errors
-    setErrors(initialRegisterFormError);
+    setErrors(initialErrors);
 
     // validate the registration form fields
     const validationResult = registerFormSchema.safeParse(registerFormData);
@@ -121,7 +101,9 @@ export default function RegisterForm() {
 
     // all data is valid and the creator can be registered
     await registerCreator.mutateAsync({
-      ...registerFormData,
+      username: registerFormData.username,
+      fullname: registerFormData.fullname,
+      bio: registerFormData.bio,
       owner: publicKey,
     });
 
@@ -130,7 +112,10 @@ export default function RegisterForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-md bg-white p-6 shadow-md">
+    <form
+      onSubmit={handleSubmit}
+      className="rounded-box bg-white p-6 shadow-md"
+    >
       <div className="mb-4">
         <label htmlFor="fullname" className="font-semibold">
           Full name
@@ -140,9 +125,15 @@ export default function RegisterForm() {
           id="fullname"
           name="fullname"
           value={registerFormData.fullname}
+          disabled={registerCreator.isPending}
           placeholder="John Smith"
           className="input mt-1 w-full border-2 bg-gray-100 focus:border-slate-900 focus:bg-white focus:outline-none"
-          onChange={handleChange}
+          onChange={(e) => {
+            setRegisterFormData((prevValues) => ({
+              ...prevValues,
+              fullname: e.target.value,
+            }));
+          }}
           required
         />
         {errors.fullname && (
@@ -158,9 +149,15 @@ export default function RegisterForm() {
           id="username"
           name="username"
           value={registerFormData.username}
+          disabled={registerCreator.isPending}
           placeholder="johnsmith"
           className="input mt-1 w-full border-2 bg-gray-100 focus:border-slate-900 focus:bg-white focus:outline-none"
-          onChange={handleChange}
+          onChange={(e) => {
+            setRegisterFormData((prevValues) => ({
+              ...prevValues,
+              username: e.target.value,
+            }));
+          }}
           required
         />
         {errors.username && (
@@ -178,7 +175,13 @@ export default function RegisterForm() {
           placeholder="web development tutorials on YouTube"
           maxLength={250}
           value={registerFormData.bio}
-          onChange={handleChange}
+          disabled={registerCreator.isPending}
+          onChange={(e) => {
+            setRegisterFormData((prevValues) => ({
+              ...prevValues,
+              bio: e.target.value,
+            }));
+          }}
         ></textarea>
         {errors.bio && <p className="text-sm text-red-600">{errors.bio}</p>}
       </div>
