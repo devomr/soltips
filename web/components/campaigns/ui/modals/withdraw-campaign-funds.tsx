@@ -89,7 +89,7 @@ export function WithdrawCampaignFunds({
       }}
     >
       <p className="font-semibold">Amount (in SOL)</p>
-      <label className="input mt-1 flex items-center gap-2 bg-gray-100">
+      <label className="input mt-1 flex items-center gap-2 border-2 bg-gray-100 focus-within:border-slate-900 focus-within:bg-white focus-within:outline-none">
         <input
           id="amount"
           disabled={withdrawCampaignFunds.isPending}

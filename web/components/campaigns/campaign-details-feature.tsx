@@ -11,7 +11,6 @@ import {
 import { useWallet } from '@solana/wallet-adapter-react';
 import { lamportsToSol, solToLamports } from '../utils/conversion.util';
 import { FormEvent, useState } from 'react';
-import { Contribution, contributions } from './types/contribution.type';
 import { LoadingSpinner } from '../shared/loading';
 import { Alert } from '../shared/alert';
 import { getCreatorTheme } from '../utils/theme.util';
@@ -100,46 +99,25 @@ function CampaignDonationForm({ campaign }: { campaign: Campaign }) {
 
   const targetAmount = campaign.targetAmount.toNumber();
   const amountDonated = campaign.amountDonated.toNumber();
-  const remainingAmount = targetAmount - amountDonated;
-  const remainingAmountInSol = lamportsToSol(remainingAmount);
 
-  const formSchema = z
-    .object({
-      contribution: z.enum(['fund', 'contribute']),
-      amount: z
-        .number()
-        .min(
-          CAMPAIGN_DONATION_MIN_AMOUNT,
-          `Amount must be at least ${CAMPAIGN_DONATION_MIN_AMOUNT}`,
-        )
-        .optional(),
-      message: z.string().max(250, 'Message must be at most 250 characters'),
-    })
-    .refine(
-      (data) => {
-        // Check if 'contribution' is 'contribute' and 'amount' is provided
-        if (data.contribution === 'contribute') {
-          return data.amount !== undefined;
-        }
-        // No validation error if 'contribution' is 'fund'
-        return true;
-      },
-      {
-        message: 'Please add the contribution amount',
-        path: ['amount'], // This targets the 'amount' field for the error message
-      },
-    );
+  const formSchema = z.object({
+    amount: z
+      .number()
+      .min(
+        CAMPAIGN_DONATION_MIN_AMOUNT,
+        `Amount must be at least ${CAMPAIGN_DONATION_MIN_AMOUNT}`,
+      ),
+    message: z.string().max(250, 'Message must be at most 250 characters'),
+  });
 
   // Define TypeScript type based on Zod schema
   type CampaignDonationFormData = z.infer<typeof formSchema>;
 
   const [formData, setFormData] = useState<CampaignDonationFormData>({
-    contribution: 'fund',
-    amount: remainingAmountInSol,
+    amount: CAMPAIGN_DONATION_MIN_AMOUNT,
     message: '',
   });
   const initialErrors = {
-    contribution: '',
     amount: '',
     message: '',
   };
@@ -170,7 +148,6 @@ function CampaignDonationForm({ campaign }: { campaign: Campaign }) {
     if (validationResult.error) {
       const fieldErrors = validationResult.error.formErrors.fieldErrors;
       setErrors({
-        contribution: fieldErrors.contribution?.[0] || '',
         amount: fieldErrors.amount?.[0] || '',
         message: fieldErrors.message?.[0] || '',
       });
@@ -181,7 +158,7 @@ function CampaignDonationForm({ campaign }: { campaign: Campaign }) {
     await makeCampaignDonation.mutateAsync({
       id: campaign.id.toNumber(),
       name: formData.message,
-      amount: solToLamports(formData.amount ?? 0),
+      amount: solToLamports(formData.amount),
       address: campaign.owner,
       campaignId: campaign.id,
     });
@@ -189,69 +166,21 @@ function CampaignDonationForm({ campaign }: { campaign: Campaign }) {
 
   return (
     <form
-      className="rounded-box bg-white p-4"
+      className="rounded-box space-y-2 bg-white p-4"
       onSubmit={handleCampaignDonationFormSubmit}
     >
-      <div className="mb-2 font-semibold">Contribute to this campaign</div>
-
-      <div className="mb-4 flex flex-col gap-2 md:flex-row">
-        {contributions.map((contributionOption) => (
-          <div key={contributionOption} className="flex-1">
-            <input
-              id={contributionOption}
-              type="radio"
-              name="contribution"
-              className="peer hidden"
-              disabled={makeCampaignDonation.isPending}
-              value={contributionOption}
-              checked={contributionOption === formData.contribution}
-              onChange={(e) => {
-                const selectedContribution = e.target.value as Contribution;
-                let amountValue = CAMPAIGN_DONATION_MIN_AMOUNT;
-
-                if (selectedContribution === 'fund') {
-                  amountValue = remainingAmountInSol;
-                }
-
-                setFormData((prevValues) => ({
-                  ...prevValues,
-                  amount: amountValue,
-                  contribution: selectedContribution,
-                }));
-              }}
-            />
-            <label
-              htmlFor={contributionOption}
-              className="label peer-checked:bg-creator-primary peer-checked:text-creator-primary peer-checked:border-creator-primary cursor-pointer rounded-md border-2 border-gray-300 p-3 peer-checked:bg-opacity-10 peer-disabled:cursor-not-allowed peer-disabled:bg-gray-100"
-            >
-              <span>
-                {contributionOption === 'fund'
-                  ? `Fund ${remainingAmountInSol} SOL`
-                  : 'Contribute'}
-              </span>
-            </label>
-          </div>
-        ))}
-        {errors.contribution && (
-          <p className="text-sm text-red-600">{errors.contribution}</p>
-        )}
-      </div>
-
-      {formData.contribution === 'contribute' && (
-        <div className="mb-4">
-          <label htmlFor="amount" className="font-semibold">
-            Contribution amount (in SOL)
-          </label>
+      <div>
+        <p className="font-semibold">Contribution amount (in SOL)</p>
+        <label className="input mt-1 flex items-center gap-2 border-2 bg-gray-100 focus-within:border-slate-900 focus-within:bg-white focus-within:outline-none">
           <input
             id="amount"
             disabled={makeCampaignDonation.isPending}
-            name="amount"
             type="number"
             step="0.01"
-            min={CAMPAIGN_DONATION_MIN_AMOUNT}
-            placeholder="Amount"
+            placeholder="Amount in SOL"
             required
-            className="input mt-1 w-full border-2 bg-gray-100 focus:border-slate-900 focus:bg-white focus:outline-none"
+            className="grow"
+            min={CAMPAIGN_DONATION_MIN_AMOUNT}
             value={formData.amount}
             onChange={(e) => {
               setFormData((prevValues) => ({
@@ -260,11 +189,26 @@ function CampaignDonationForm({ campaign }: { campaign: Campaign }) {
               }));
             }}
           />
-          {errors.amount && (
-            <p className="text-sm text-red-600">{errors.amount}</p>
-          )}
-        </div>
-      )}
+          <button
+            title="Fund entire campaign"
+            className="btn btn-sm btn-outline"
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+
+              const remainingAmount = targetAmount - amountDonated;
+
+              setFormData((prevValues) => ({
+                ...prevValues,
+                amount: lamportsToSol(remainingAmount),
+              }));
+            }}
+          >
+            MAX
+          </button>
+        </label>
+      </div>
+
       <div>
         <label htmlFor="message" className="font-semibold">
           Message
@@ -288,8 +232,8 @@ function CampaignDonationForm({ campaign }: { campaign: Campaign }) {
           <p className="text-sm text-red-600">{errors.message}</p>
         )}
       </div>
-      <button className="btn mt-4 w-full rounded-full bg-purple-800 text-white hover:bg-purple-800 hover:bg-opacity-90">
-        {`Pay ${formData.contribution === 'fund' ? remainingAmountInSol : formData.amount} SOL`}
+      <button className="btn bg-creator-primary text-creator-100 hover:bg-creator-primary mt-4 w-full rounded-full hover:bg-opacity-90">
+        Pay {formData.amount} SOL
       </button>
     </form>
   );
