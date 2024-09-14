@@ -1,12 +1,8 @@
 'use client';
 
 import { useWallet } from '@solana/wallet-adapter-react';
-import { useRouter } from 'next/navigation';
 import { FormEvent, useCallback, useEffect, useState } from 'react';
-import {
-  useCrowdfundingProgram,
-  useGetCreatorByAddress,
-} from '../data-access/crowdfunding-data-access';
+import { useCrowdfundingProgram } from '../data-access/crowdfunding-data-access';
 import { z } from 'zod';
 import { IconCheck, IconEye, IconPalette } from '@tabler/icons-react';
 import { lamportsToSol, solToLamports } from '../utils/conversion.util';
@@ -21,35 +17,19 @@ import {
   PRICE_PER_DONATION_MAX_VALUE,
 } from '../utils/constants';
 import { debounce } from '../utils/debounce.util';
+import DashboardLayout from '../dashboard/dashboard-layout';
+import { useCreator } from '@/context/creator-context';
 
-type CreatorFormData = {
-  isSupportersCountVisible: boolean;
-  pricePerDonation: number;
-  donationItem: string;
-  themeColor: string;
-  thanksMessage: string;
-};
+export default function CreatorPageSettingsFeature() {
+  return (
+    <DashboardLayout>
+      <CreatorPageForm />
+    </DashboardLayout>
+  );
+}
 
-type CreatorFormError = {
-  pricePerDonation: string;
-  thanksMessage: string;
-};
-
-const initialCreatorFormData: CreatorFormData = {
-  isSupportersCountVisible: true,
-  pricePerDonation: 0.1,
-  donationItem: '',
-  themeColor: '#794BC4',
-  thanksMessage: '',
-};
-
-const initialCreatorFormError: CreatorFormError = {
-  pricePerDonation: '',
-  thanksMessage: '',
-};
-
-// Define the Zod schema for validation
-const creatorFormSchema = z.object({
+const creatorPageFormSchema = z.object({
+  isSupportersCountVisible: z.boolean(),
   pricePerDonation: z
     .number()
     .min(
@@ -60,6 +40,8 @@ const creatorFormSchema = z.object({
       PRICE_PER_DONATION_MAX_VALUE,
       `Price per donation must be at most ${PRICE_PER_DONATION_MAX_VALUE} SOL`,
     ),
+  donationItem: z.string(),
+  themeColor: z.string(),
   thanksMessage: z
     .string()
     .max(
@@ -68,26 +50,39 @@ const creatorFormSchema = z.object({
     ),
 });
 
-export default function EditCreatorPageForm() {
-  const router = useRouter();
+// Define TypeScript type based on Zod schema
+type CreatorPageFormData = z.infer<typeof creatorPageFormSchema>;
+
+const initialCreatorFormData: CreatorPageFormData = {
+  isSupportersCountVisible: true,
+  pricePerDonation: 0.1,
+  donationItem: 'coffee',
+  themeColor: '#794BC4',
+  thanksMessage: '',
+};
+
+const initialErrors = {
+  pricePerDonation: '',
+  donationItem: '',
+  themeColor: '',
+  thanksMessage: '',
+};
+
+function CreatorPageForm() {
+  const { creator } = useCreator();
   const { publicKey } = useWallet();
   const { updateCreatorPage } = useCrowdfundingProgram();
-  const { data: creator } = useGetCreatorByAddress({ address: publicKey });
+
   const [showThankYouModal, setShowThankYouModal] = useState(false);
   const [customThemeColor, setCustomThemeColor] = useState('#000000');
-
-  const [formData, setFormData] = useState<CreatorFormData>(
+  const [formData, setFormData] = useState<CreatorPageFormData>(
     initialCreatorFormData,
   );
-  const [errors, setErrors] = useState<CreatorFormError>(
-    initialCreatorFormError,
-  );
+  const [errors, setErrors] = useState<typeof initialErrors>(initialErrors);
 
   if (!creator) {
     return null;
   }
-
-  console.log(creator);
 
   useEffect(() => {
     if (creator) {
@@ -108,6 +103,13 @@ export default function EditCreatorPageForm() {
     }
   }, [creator]);
 
+  useEffect(() => {
+    setFormData({
+      ...formData,
+      themeColor: customThemeColor,
+    });
+  }, [customThemeColor]);
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -117,24 +119,31 @@ export default function EditCreatorPageForm() {
     }
 
     // Clear previous errors
-    setErrors(initialCreatorFormError);
+    setErrors(initialErrors);
 
     // Validate the creator page form fields
-    const validationResult = creatorFormSchema.safeParse(formData);
+    const validationResult = creatorPageFormSchema.safeParse(formData);
 
     if (validationResult.error) {
       const fieldErrors = validationResult.error.formErrors.fieldErrors;
       setErrors({
         pricePerDonation: fieldErrors.pricePerDonation?.[0] || '',
+        donationItem: fieldErrors.donationItem?.[0] || '',
+        themeColor: fieldErrors.themeColor?.[0] || '',
         thanksMessage: fieldErrors.thanksMessage?.[0] || '',
       });
 
       return;
     }
 
+    console.log(formData);
+
     await updateCreatorPage.mutateAsync({
-      ...formData,
+      isSupportersCountVisible: formData.isSupportersCountVisible,
       pricePerDonation: solToLamports(formData.pricePerDonation),
+      donationItem: formData.donationItem,
+      themeColor: formData.themeColor,
+      thanksMessage: formData.thanksMessage,
       owner: publicKey,
     });
   };
@@ -148,18 +157,12 @@ export default function EditCreatorPageForm() {
 
   // Create a debounced version of the setCustomThemeColor function
   const debouncedSetCustomThemeColor = useCallback(
-    debounce((color: string) => {
-      setCustomThemeColor(color);
-      setFormData({
-        ...formData,
-        themeColor: color,
-      });
-    }, 300), // Adjust the debounce delay as needed
+    debounce((color: string) => setCustomThemeColor(color), 300), // Adjust the debounce delay as needed
     [],
   );
 
   return (
-    <>
+    <div className="rounded-box bg-white p-4">
       <form onSubmit={handleSubmit}>
         <div className="space-y-2 divide-y divide-gray-200">
           <div className="py-6">
@@ -237,6 +240,9 @@ export default function EditCreatorPageForm() {
                 </button>
               ))}
             </div>
+            {errors.donationItem && (
+              <p className="text-sm text-red-600">{errors.donationItem}</p>
+            )}
           </div>
           <div className="py-6">
             <label className="font-bold">Theme color</label>
@@ -297,6 +303,9 @@ export default function EditCreatorPageForm() {
                 />
               </div>
             </div>
+            {errors.themeColor && (
+              <p className="text-sm text-red-600">{errors.themeColor}</p>
+            )}
           </div>
 
           <div className="py-6">
@@ -361,6 +370,6 @@ export default function EditCreatorPageForm() {
         donationItem={formData.donationItem}
         thanksMessage={formData.thanksMessage}
       />
-    </>
+    </div>
   );
 }

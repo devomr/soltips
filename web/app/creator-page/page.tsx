@@ -1,5 +1,5 @@
-import CreatorPageFeature from '@/components/creator-page/creator-page-feature';
+import CreatorPageSettingsFeature from '@/components/creator-settings/creator-page-settings-feature';
 
 export default function Page() {
-  return <CreatorPageFeature />;
+  return <CreatorPageSettingsFeature />;
 }
