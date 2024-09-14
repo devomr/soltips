@@ -4,14 +4,14 @@
  * This regex matches URLs with the following components:
  *
  * - **Scheme** (optional): Either `http` or `https`, followed by `://`. For example: `http://` or `https://`.
- * - **Domain**: Consists of domain labels, where each label is at least 2 characters long and can include alphanumeric characters and hyphens, but cannot start or end with a hyphen. Domain labels are separated by dots. For example: `example.`, `sub-domain.`, or `example-domain.`
+ * - **Domain**: Consists of domain labels, where each label is at least 1 character long and can include alphanumeric characters and hyphens, but cannot start or end with a hyphen. Domain labels are separated by dots. For example: `example.`, `sub-domain.`, or `example-domain.`
  * - **Top-Level Domain (TLD)**: Must be at least 2 characters long and can include letters only. For example: `com`, `uk`, `info`.
  * - **Port Number** (optional): A colon `:` followed by one or more digits representing the port number. For example: `:8080`.
  * - **Path** (optional): Starts with a forward slash `/` followed by any characters except whitespace. For example: `/path/to/resource?query=param#fragment`.
  *
  */
 export const URL_REGEX =
-  /^(https?:\/\/)?([a-zA-Z0-9-]{2,}\.)+[a-zA-Z]{2,}(:\d+)?(\/[^\s]*)?$/;
+  /^(https?:\/\/)?([a-zA-Z0-9-]{1,}\.)+[a-zA-Z]{2,}(:\d+)?(\/[^\s]*)?$/;
 
 /**
  * Extracts the domain from a given URL.
