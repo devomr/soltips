@@ -92,6 +92,7 @@ interface CreateCampaignInput {
 }
 
 interface MakeCampaignDonationInput {
+  id: string;
   name: string;
   amount: number;
   address: PublicKey;
@@ -357,6 +358,13 @@ export function useCrowdfundingProgram() {
             'crowdfunding',
             'list-campaigns',
             { cluster, address: input.address },
+          ],
+        }),
+        client.invalidateQueries({
+          queryKey: [
+            'crowdfunding',
+            'get-campaign',
+            { cluster, address: input.address, id: input.id },
           ],
         }),
       ]);

@@ -1,8 +1,8 @@
 'use client';
 
 import { useCreator } from '@/context/creator-context';
-import { CampaignsList } from './campaign-ui';
 import { CreatorLayout } from '../creator/creator-layout';
+import { CreatorCampaignsList } from './ui/creator-campaigns-list';
 
 export default function CreatorCampaignsFeature() {
   return (
@@ -19,5 +19,5 @@ function CreatorCampaignsSection() {
     return null;
   }
 
-  return <CampaignsList creator={creator} />;
+  return <CreatorCampaignsList creator={creator} />;
 }

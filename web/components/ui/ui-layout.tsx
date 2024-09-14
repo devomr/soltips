@@ -84,7 +84,7 @@ export function AppModal({
 
   const submitButtonClass = submitStyle?.creatorTheme
     ? 'bg-creator-primary text-creator-100 hover:bg-creator-primary hover:bg-opacity-90'
-    : 'bg-purple-800 text-white';
+    : 'bg-purple-800 text-white hover:bg-purple-800 hover:bg-opacity-90';
 
   return (
     <dialog className="modal" ref={dialogRef}>
