@@ -24,13 +24,12 @@ export enum ClusterNetwork {
 // The endpoint provided by clusterApiUrl('mainnet-beta') does not allow access from the browser due to CORS restrictions
 // To use the mainnet-beta cluster, provide a custom endpoint
 export const defaultClusters: Cluster[] = [
-  { name: 'local', endpoint: 'http://localhost:8899' },
   {
     name: 'devnet',
     endpoint: clusterApiUrl('devnet'),
     network: ClusterNetwork.Devnet,
   },
-
+  { name: 'local', endpoint: 'http://localhost:8899' },
   {
     name: 'testnet',
     endpoint: clusterApiUrl('testnet'),
@@ -38,13 +37,17 @@ export const defaultClusters: Cluster[] = [
   },
 ];
 
+const activeCluster = defaultClusters.find(
+  (c) => c.name === process.env.ACTIVE_CLUSTER,
+);
+
 const clusterAtom = atomWithStorage<Cluster>(
   'solana-cluster',
-  defaultClusters[0]
+  activeCluster ?? defaultClusters[0],
 );
 const clustersAtom = atomWithStorage<Cluster[]>(
   'solana-clusters',
-  defaultClusters
+  defaultClusters,
 );
 
 const activeClustersAtom = atom<Cluster[]>((get) => {
@@ -72,7 +75,7 @@ export interface ClusterProviderContext {
 }
 
 const Context = createContext<ClusterProviderContext>(
-  {} as ClusterProviderContext
+  {} as ClusterProviderContext,
 );
 
 export function ClusterProvider({ children }: { children: ReactNode }) {
